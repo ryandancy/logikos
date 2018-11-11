@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
  * Represents a logical component, a blanket term for a gate, input, or output. This abstract base class contains
  * {@link Connection}s representing inputs and outputs and has logic for evaluating chains of logical components.
  */
+// TODO give LogicComponents IDs
 public abstract class LogicComponent {
   
   private final Port.Input[] inputs;
