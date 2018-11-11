@@ -39,8 +39,24 @@ public abstract class LogicComponent {
     return inputs.length;
   }
   
+  public Port.Input getInput(int num) {
+    return inputs[num];
+  }
+  
+  public Port.Input[] getInputs() {
+    return inputs;
+  }
+  
   public int getNumOutputs() {
     return outputs.length;
+  }
+  
+  public Port.Output getOutput(int num) {
+    return outputs[num];
+  }
+  
+  public Port.Output[] getOutputs() {
+    return outputs;
   }
   
   /**
