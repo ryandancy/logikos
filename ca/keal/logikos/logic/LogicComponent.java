@@ -15,8 +15,8 @@ public abstract class LogicComponent {
   private final Port.Output[] outputs;
   
   /**
-   * Initialize the LogicComponent with {@code numInputs} inputs {@link Connection}s and {@code numOutputs} output
-   * {@link Connection}s. All {@link Connection}s are initialized to {@code null}.
+   * Initialize the LogicComponent with {@code numInputs} inputs {@link Port.Input}s and {@code numOutputs} output
+   * {@link Port.Output}s.
    * @param numInputs The number of inputs this LogicComponent has.
    * @param numOutputs The number of outputs this LogicComponent has.
    */
@@ -44,12 +44,21 @@ public abstract class LogicComponent {
   }
   
   /**
-   * Find a value for this LogicComponent by evaluating all previous LogicComponents. This method may be overridden in
-   * the case where the input value is constant. TODO memoize 
+   * Find the output values for this LogicComponent by evaluating all previous LogicComponents.
+   * @return This {@link LogicComponent}'s output values for its current input values.
    */
+  // TODO memoize, implement an EvaluationListener
   public boolean[] evaluate() {
-    return null;
+    // Get all the inputs
+    boolean[] inputValues = new boolean[getNumInputs()];
+    for (int i = 0; i < inputValues.length; i++) {
+      inputValues[i] = inputs[i].getInputValue();
+    }
+    
+    return logicalEval(inputValues);
   }
+  
+  protected abstract boolean[] logicalEval(boolean[] input);
   
   @Override
   public abstract String toString();

@@ -81,6 +81,7 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
    * A {@link Port} representing an input port. It is connectable to {@link Port.Output}s.
    */
   public static class Input extends Port<Output> {
+    
     public Input(int number, LogicComponent component) {
       super(number, component);
     }
@@ -89,12 +90,28 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
     protected Connection getNewConnectionTo(Output port) {
       return new Connection(this, port);
     }
+  
+    /**
+     * @return The value of the connection to which this input is connected. Note that there is no corresponding
+     * getOutputValue() in {@link Port.Output} because {@link LogicComponent}s are evaluated backwards: it doesn't make
+     * sense to query an output port for the value of its connection, as the {@link Connection} will just call
+     * the original {@link LogicComponent}.
+     */
+    public boolean getInputValue() {
+      Connection connection = getConnection();
+      if (connection == null) {
+        throw new IllegalStateException("Port had no connection when trying to get input value");
+      }
+      return connection.getValue();
+    }
+    
   }
   
   /**
    * A {@link Port} representing an output port. It is connectable to {@link Port.Input}s.
    */
   public static class Output extends Port<Input> {
+    
     public Output(int number, LogicComponent component) {
       super(number, component);
     }
@@ -103,6 +120,7 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
     protected Connection getNewConnectionTo(Input port) {
       return new Connection(port, this);
     }
+    
   }
   
 }
