@@ -31,7 +31,7 @@ public abstract class LogicComponent {
       BiFunction<Integer, LogicComponent, P> portConstructor,
       IntFunction<P[]> arrayConstructor) {
     return IntStream.range(0, numPorts)
-        .mapToObj(portNum -> portConstructor.apply(numPorts, this))
+        .mapToObj(portNum -> portConstructor.apply(portNum, this))
         .toArray(arrayConstructor);
   }
   
