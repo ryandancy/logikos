@@ -1,5 +1,8 @@
 package ca.keal.logikos.logic;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A generic, abstract class representing a port on a {@link LogicComponent}. It has a non-negative port number and a
  * {@link LogicComponent} to which it belongs, as well as possibly a {@link Connection} representing its connection to
@@ -17,7 +20,7 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
   private final int portNumber;
   private final LogicComponent component;
   
-  private Connection connection = null;
+  //private Connection connection = null;
   
   private Port(int number, LogicComponent component) {
     if (component == null) throw new NullPointerException("Port's component cannot be null");
@@ -34,30 +37,7 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
     return component;
   }
   
-  public Connection getConnection() {
-    return connection;
-  }
-  
-  /**
-   * For internal use. It is recommended to use {@link #connectTo(Port)} to modify this {@link Port}'s
-   * {@link Connection}.
-   */
-  void setConnection(Connection connection) {
-    this.connection = connection;
-  }
-  
-  /**
-   * Establish a {@link Connection} between {@code port} and this {@link Port}. This method will overwrite the
-   * {@link Connection}s of both this {@link Port} and {@code port}.
-   * @param port The port of the opposite type to which to connect this {@link Port}.
-   */
-  public void connectTo(CONNECTABLE_TO port) {
-    Connection connection = getNewConnectionTo(port);
-    this.connection = connection;
-    port.setConnection(connection);
-  }
-  
-  protected abstract Connection getNewConnectionTo(CONNECTABLE_TO port);
+  public abstract void connectTo(CONNECTABLE_TO port);
   
   @Override
   public boolean equals(Object obj) {
@@ -78,17 +58,30 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
   }
   
   /**
-   * A {@link Port} representing an input port. It is connectable to {@link Port.Output}s.
+   * A {@link Port} representing an input port. It is connectable to a single {@link Port.Output}.
    */
   public static class Input extends Port<Output> {
+    
+    private Connection connection = null;
     
     public Input(int number, LogicComponent component) {
       super(number, component);
     }
-  
+    
+    public Connection getConnection() {
+      return connection;
+    }
+    
     @Override
-    protected Connection getNewConnectionTo(Output port) {
-      return new Connection(this, port);
+    public void connectTo(Output port) {
+      // Remove the previous connection from the other port if it exists
+      if (connection != null) {
+        connection.getOutput().getConnections().remove(connection);
+      }
+      
+      // Overwrite the connection and add it to the other port
+      connection = new Connection(this, port);
+      port.getConnections().add(connection);
     }
   
     /**
@@ -108,17 +101,24 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
   }
   
   /**
-   * A {@link Port} representing an output port. It is connectable to {@link Port.Input}s.
+   * A {@link Port} representing an output port. It is connectable to multiple {@link Port.Input}s.
    */
   public static class Output extends Port<Input> {
+    
+    private final Set<Connection> connections = new HashSet<>();
     
     public Output(int number, LogicComponent component) {
       super(number, component);
     }
-  
+    
+    public Set<Connection> getConnections() {
+      return connections;
+    }
+    
     @Override
-    protected Connection getNewConnectionTo(Input port) {
-      return new Connection(port, this);
+    public void connectTo(Input port) {
+      // Delegate to Input.connectTo() - no reason to duplicate code here
+      port.connectTo(this);
     }
     
   }
