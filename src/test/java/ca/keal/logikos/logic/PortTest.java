@@ -72,7 +72,7 @@ class PortTest {
     // Final state should be outputPort1 -- inputPort1, outputPort2 -- inputPort2
     assertNotNull(inputPort1.getConnection());
     assertNotNull(inputPort2.getConnection());
-    assertEquals(1, outputPort1.getConnections().size()); // FAILING
+    assertEquals(1, outputPort1.getConnections().size());
     assertEquals(1, outputPort2.getConnections().size());
     assertTrue(outputPort1.getConnections().contains(inputPort1.getConnection()));
     assertTrue(outputPort2.getConnections().contains(inputPort2.getConnection()));

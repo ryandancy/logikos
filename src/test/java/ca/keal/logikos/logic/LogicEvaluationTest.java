@@ -94,4 +94,32 @@ class LogicEvaluationTest {
     assertArrayEquals(output.evaluate(), new boolean[] {outputVal});
   }
   
+  @DisplayName("XOR gate circuit")
+  @ParameterizedTest(name = "{0} XOR {1} = ({0} NAND {1}) AND ({0} OR {1}) should be {2}")
+  @CsvSource({"true, true, false", "true, false, true", "false, true, true", "false, false, false"})
+  void xorGate(boolean inputVal1, boolean inputVal2, boolean outputVal) {
+    Input input1 = new Input();
+    Input input2 = new Input();
+    NandGate nand = new NandGate();
+    OrGate or = new OrGate();
+    AndGate and = new AndGate();
+    Output output = new Output();
+    
+    input1.getOutput(0).connectTo(nand.getInput(0));
+    input2.getOutput(0).connectTo(nand.getInput(1));
+    
+    input1.getOutput(0).connectTo(or.getInput(0));
+    input2.getOutput(0).connectTo(or.getInput(1));
+    
+    nand.getOutput(0).connectTo(and.getInput(0));
+    or.getOutput(0).connectTo(and.getInput(1));
+    
+    and.getOutput(0).connectTo(output.getInput(0));
+    
+    input1.setValue(inputVal1);
+    input2.setValue(inputVal2);
+    
+    assertArrayEquals(output.evaluate(), new boolean[] {outputVal});
+  }
+  
 }
