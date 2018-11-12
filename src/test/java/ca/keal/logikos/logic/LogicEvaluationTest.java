@@ -18,7 +18,7 @@ class LogicEvaluationTest {
     output.getInput(0).connectTo(input.getOutput(0));
     input.setValue(value);
     
-    assertArrayEquals(output.evaluate(), new boolean[] {value});
+    assertArrayEquals(new boolean[] {value}, output.evaluate());
   }
   
   @DisplayName("Simple NOT gate circuit")
@@ -33,7 +33,7 @@ class LogicEvaluationTest {
     not.getOutput(0).connectTo(output.getInput(0));
     input.setValue(inputValue);
     
-    assertArrayEquals(output.evaluate(), new boolean[] {outputValue});
+    assertArrayEquals(new boolean[] {outputValue}, output.evaluate());
   }
   
   @DisplayName("Simple AND gate circuit")
@@ -52,7 +52,7 @@ class LogicEvaluationTest {
     input1.setValue(inputVal1);
     input2.setValue(inputVal2);
     
-    assertArrayEquals(output.evaluate(), new boolean[] {outputVal});
+    assertArrayEquals(new boolean[] {outputVal}, output.evaluate());
   }
   
   @DisplayName("Simple OR gate circuit")
@@ -71,7 +71,7 @@ class LogicEvaluationTest {
     input1.setValue(inputVal1);
     input2.setValue(inputVal2);
     
-    assertArrayEquals(output.evaluate(), new boolean[] {outputVal});
+    assertArrayEquals(new boolean[] {outputVal}, output.evaluate());
   }
   
   
@@ -91,7 +91,7 @@ class LogicEvaluationTest {
     input1.setValue(inputVal1);
     input2.setValue(inputVal2);
     
-    assertArrayEquals(output.evaluate(), new boolean[] {outputVal});
+    assertArrayEquals(new boolean[] {outputVal}, output.evaluate());
   }
   
   @DisplayName("XOR gate circuit")
@@ -119,7 +119,46 @@ class LogicEvaluationTest {
     input1.setValue(inputVal1);
     input2.setValue(inputVal2);
     
-    assertArrayEquals(output.evaluate(), new boolean[] {outputVal});
+    assertArrayEquals(new boolean[] {outputVal}, output.evaluate());
+  }
+  
+  @DisplayName("Single-digit binary adder")
+  @ParameterizedTest(name = "{0} + {1} = {2}, carry {3}")
+  @CsvSource({"false, false, false, false", "true, false, true, false", "false, true, true, false",
+                 "true, true, false, true"})
+  void binaryAddition(boolean addend1, boolean addend2, boolean sum, boolean carry) {
+    // TODO update to test memoization
+    // Sum is XOR, carry is AND
+    Input input1 = new Input();
+    Input input2 = new Input();
+    NandGate nand = new NandGate();
+    OrGate or = new OrGate();
+    AndGate andSum = new AndGate();
+    AndGate andCarry = new AndGate();
+    Output sumOutput = new Output();
+    Output carryOutput = new Output();
+    
+    input1.getOutput(0).connectTo(nand.getInput(0));
+    input2.getOutput(0).connectTo(nand.getInput(1));
+    
+    input1.getOutput(0).connectTo(or.getInput(0));
+    input2.getOutput(0).connectTo(or.getInput(1));
+    
+    nand.getOutput(0).connectTo(andSum.getInput(0));
+    or.getOutput(0).connectTo(andSum.getInput(1));
+    
+    andSum.getOutput(0).connectTo(sumOutput.getInput(0));
+    
+    input1.getOutput(0).connectTo(andCarry.getInput(0));
+    input2.getOutput(0).connectTo(andCarry.getInput(1));
+    
+    andCarry.getOutput(0).connectTo(carryOutput.getInput(0));
+    
+    input1.setValue(addend1);
+    input2.setValue(addend2);
+    
+    assertArrayEquals(new boolean[] {sum}, sumOutput.evaluate());
+    assertArrayEquals(new boolean[] {carry}, carryOutput.evaluate());
   }
   
 }
