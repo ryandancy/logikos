@@ -11,8 +11,9 @@ public class Output extends LogicComponent {
   }
   
   @Override
-  protected boolean[] logicalEval(boolean[] input) {
-    return input;
+  public boolean[] evaluate() {
+    // Mirror the input value
+    return new boolean[] {getInput(0).getInputValue()};
   }
   
   @Override

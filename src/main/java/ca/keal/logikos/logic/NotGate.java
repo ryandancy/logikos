@@ -1,6 +1,6 @@
 package ca.keal.logikos.logic;
 
-public class NotGate extends LogicComponent {
+public class NotGate extends Gate {
   
   public NotGate() {
     super(1, 1); // 1 input, 1 output

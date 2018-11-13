@@ -29,7 +29,8 @@ public class Input extends LogicComponent {
   }
   
   @Override
-  protected boolean[] logicalEval(boolean[] input) {
+  public boolean[] evaluate() {
+    // Supply the set value
     return new boolean[] {value};
   }
   

@@ -66,21 +66,11 @@ public abstract class LogicComponent {
   }
   
   /**
-   * Find the output values for this LogicComponent by evaluating all previous LogicComponents.
+   * Find the output values for this LogicComponent.
    * @return This {@link LogicComponent}'s output values for its current input values.
    */
-  // TODO memoize, implement an EvaluationListener
-  public boolean[] evaluate() {
-    // Get all the inputs
-    boolean[] inputValues = new boolean[getNumInputs()];
-    for (int i = 0; i < inputValues.length; i++) {
-      inputValues[i] = inputs[i].getInputValue();
-    }
-    
-    return logicalEval(inputValues);
-  }
-  
-  protected abstract boolean[] logicalEval(boolean[] input);
+  // TODO implement an EvaluationListener
+  public abstract boolean[] evaluate();
   
   @Override
   public String toString() {

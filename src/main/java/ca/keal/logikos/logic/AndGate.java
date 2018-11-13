@@ -1,6 +1,6 @@
 package ca.keal.logikos.logic;
 
-public class AndGate extends LogicComponent {
+public class AndGate extends Gate {
   
   public AndGate() {
     super(2, 1); // 2 inputs, 1 output

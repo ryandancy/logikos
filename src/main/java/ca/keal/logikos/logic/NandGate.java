@@ -1,6 +1,6 @@
 package ca.keal.logikos.logic;
 
-public class NandGate extends LogicComponent {
+public class NandGate extends Gate {
   
   public NandGate() {
     super(2, 1); // 2 inputs, 1 output

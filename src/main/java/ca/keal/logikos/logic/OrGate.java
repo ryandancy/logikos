@@ -1,6 +1,6 @@
 package ca.keal.logikos.logic;
 
-public class OrGate extends LogicComponent {
+public class OrGate extends Gate {
   
   public OrGate() {
     super(2, 1); // 2 inputs, 1 output
