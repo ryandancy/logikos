@@ -12,7 +12,7 @@ public class OrGate extends LogicComponent {
   }
   
   @Override
-  public String toString() {
+  public String getName() {
     return "OR";
   }
   

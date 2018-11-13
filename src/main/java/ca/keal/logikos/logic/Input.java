@@ -34,7 +34,7 @@ public class Input extends LogicComponent {
   }
   
   @Override
-  public String toString() {
+  public String getName() {
     return "Input[value=" + value + "]";
   }
   

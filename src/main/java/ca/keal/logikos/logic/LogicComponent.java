@@ -1,5 +1,6 @@
 package ca.keal.logikos.logic;
 
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.IntFunction;
 import java.util.stream.IntStream;
@@ -8,11 +9,12 @@ import java.util.stream.IntStream;
  * Represents a logical component, a blanket term for a gate, input, or output. This abstract base class contains
  * {@link Connection}s representing inputs and outputs and has logic for evaluating chains of logical components.
  */
-// TODO give LogicComponents IDs
 public abstract class LogicComponent {
   
   private final Port.Input[] inputs;
   private final Port.Output[] outputs;
+  
+  private final UUID id = UUID.randomUUID();
   
   /**
    * Initialize the LogicComponent with {@code numInputs} inputs {@link Port.Input}s and {@code numOutputs} output
@@ -33,6 +35,10 @@ public abstract class LogicComponent {
     return IntStream.range(0, numPorts)
         .mapToObj(portNum -> portConstructor.apply(portNum, this))
         .toArray(arrayConstructor);
+  }
+  
+  public UUID getId() {
+    return id;
   }
   
   public int getNumInputs() {
@@ -77,6 +83,22 @@ public abstract class LogicComponent {
   protected abstract boolean[] logicalEval(boolean[] input);
   
   @Override
-  public abstract String toString();
+  public String toString() {
+    return getName() + "[id=" + getId() + "]";
+  }
+  
+  protected abstract String getName();
+  
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null || !getClass().equals(obj.getClass())) return false;
+    LogicComponent component = (LogicComponent) obj;
+    return getId().equals(component.getId());
+  }
+  
+  @Override
+  public int hashCode() {
+    return getId().hashCode();
+  }
   
 }

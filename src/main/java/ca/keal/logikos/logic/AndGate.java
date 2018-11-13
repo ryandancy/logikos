@@ -12,7 +12,7 @@ public class AndGate extends LogicComponent {
   }
   
   @Override
-  public String toString() {
+  public String getName() {
     return "AND";
   }
   

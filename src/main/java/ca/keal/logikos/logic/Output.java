@@ -16,7 +16,7 @@ public class Output extends LogicComponent {
   }
   
   @Override
-  public String toString() {
+  public String getName() {
     return "Output";
   }
   
