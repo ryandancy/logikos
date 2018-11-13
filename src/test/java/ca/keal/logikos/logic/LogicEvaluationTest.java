@@ -1,11 +1,18 @@
 package ca.keal.logikos.logic;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
+@ExtendWith(MockitoExtension.class)
 class LogicEvaluationTest {
   
   @DisplayName("Input directly connected to output: output should mirror input")
@@ -122,12 +129,11 @@ class LogicEvaluationTest {
     assertArrayEquals(new boolean[] {outputVal}, output.evaluate());
   }
   
-  @DisplayName("Single-digit binary adder")
+  @DisplayName("Single-digit binary adder (test multiple outputs)")
   @ParameterizedTest(name = "{0} + {1} = {2}, carry {3}")
   @CsvSource({"false, false, false, false", "true, false, true, false", "false, true, true, false",
                  "true, true, false, true"})
   void binaryAddition(boolean addend1, boolean addend2, boolean sum, boolean carry) {
-    // TODO update to test memoization
     // Sum is XOR, carry is AND
     Input input1 = new Input();
     Input input2 = new Input();
@@ -159,6 +165,75 @@ class LogicEvaluationTest {
     
     assertArrayEquals(new boolean[] {sum}, sumOutput.evaluate());
     assertArrayEquals(new boolean[] {carry}, carryOutput.evaluate());
+  }
+  
+  @DisplayName("Two gates in succession, last should memoize: 1 output")
+  @Test
+  void memoization2Gates1Output() {
+    // Sequence: input -> firstGate -> secondGate -> output
+    Input input = new Input();
+    NotGate firstGate = spy(NotGate.class);
+    NotGate secondGate = spy(NotGate.class);
+    Output output = new Output();
+    
+    input.getOutput(0).connectTo(firstGate.getInput(0));
+    firstGate.getOutput(0).connectTo(secondGate.getInput(0));
+    secondGate.getOutput(0).connectTo(output.getInput(0));
+    
+    input.setValue(false);
+    output.evaluate();
+    output.evaluate();
+    
+    // Second gate should have memoized the output so first gate was only called once
+    verify(firstGate, times(1)).evaluate();
+    verify(secondGate, times(2)).evaluate();
+  }
+  
+  @DisplayName("Two gates in succession, last should memoize: 2 outputs")
+  @Test
+  void memoization2Gates2Outputs() {
+    // Sequence: input -> firstGate -> secondGate -> output*2
+    Input input = new Input();
+    NotGate firstGate = spy(NotGate.class);
+    NotGate secondGate = spy(NotGate.class);
+    Output output1 = new Output();
+    Output output2 = new Output();
+    
+    input.getOutput(0).connectTo(firstGate.getInput(0));
+    firstGate.getOutput(0).connectTo(secondGate.getInput(0));
+    secondGate.getOutput(0).connectTo(output1.getInput(0));
+    secondGate.getOutput(0).connectTo(output2.getInput(0));
+    
+    input.setValue(false);
+    output1.evaluate();
+    output2.evaluate();
+    
+    // Second gate should have memoized the output so first gate was only called once
+    verify(firstGate, times(1)).evaluate();
+    verify(secondGate, times(2)).evaluate();
+  }
+  
+  @DisplayName("Resetting input value voids memoization")
+  @Test
+  void resetInputVoidsMemoization() {
+    // Sequence: input -> firstGate -> secondGate -> output
+    Input input = new Input();
+    NotGate firstGate = spy(NotGate.class);
+    NotGate secondGate = spy(NotGate.class);
+    Output output = new Output();
+    
+    input.getOutput(0).connectTo(firstGate.getInput(0));
+    firstGate.getOutput(0).connectTo(secondGate.getInput(0));
+    secondGate.getOutput(0).connectTo(output.getInput(0));
+    
+    input.setValue(false);
+    output.evaluate();
+    input.setValue(false); // even the same value should void the memoization
+    output.evaluate();
+    
+    // Both gates should have been called both times as they were dirtied with the second setValue()
+    verify(firstGate, times(2)).evaluate();
+    verify(secondGate, times(2)).evaluate();
   }
   
 }
