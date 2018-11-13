@@ -9,6 +9,12 @@ package ca.keal.logikos.logic;
 public abstract class Gate extends LogicComponent {
   
   /**
+   * The cached result from the last time this {@link Gate} was evaluated. {@code null} means the output must be
+   * re-generated.
+   */
+  private boolean[] memoizedOutput = null;
+  
+  /**
    * Initialize the Gate with {@code numInputs} inputs {@link Port.Input}s and {@code numOutputs} output
    * {@link Port.Output}s.
    * @param numInputs The number of inputs this Gate has.
@@ -19,12 +25,31 @@ public abstract class Gate extends LogicComponent {
   }
   
   /**
+   * Force this {@link Gate} to re-query its inputs and re-evaluate the logical operation. This must be called when
+   * an input has changed and if one wishes the circuit to be re-evaluated.
+   */
+  @Override
+  public void markDirty() {
+    memoizedOutput = null;
+  }
+  
+  /**
+   * @return Whether this {@link Gate} will re-query its inputs upon evaluation.
+   */
+  @Override
+  public boolean isDirty() {
+    return memoizedOutput == null;
+  }
+  
+  /**
    * Find this {@link Gate}'s output values by evaluating all previous {@link LogicComponent}s.
    * @return This {@link Gate}'s output values for its current input values.
    */
-  // TODO memoize, EvaluationListener
+  // TODO EvaluationListener
   @Override
   public boolean[] evaluate() {
+    if (memoizedOutput != null) return memoizedOutput;
+    
     // Get all the input values
     Port.Input[] inputs = getInputs();
     boolean[] inputValues = new boolean[getNumInputs()];
@@ -33,7 +58,8 @@ public abstract class Gate extends LogicComponent {
     }
     
     // Evaluate them
-    return logicalEval(inputValues);
+    memoizedOutput = logicalEval(inputValues);
+    return memoizedOutput;
   }
   
   /**

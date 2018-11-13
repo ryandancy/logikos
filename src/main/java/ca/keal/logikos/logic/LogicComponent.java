@@ -72,6 +72,14 @@ public abstract class LogicComponent {
   // TODO implement an EvaluationListener
   public abstract boolean[] evaluate();
   
+  /** @see Gate#markDirty() */
+  public void markDirty() {}
+  
+  /** @see Gate#isDirty() */
+  public boolean isDirty() {
+    return false;
+  }
+  
   @Override
   public String toString() {
     return getName() + "[id=" + getId() + "]";
