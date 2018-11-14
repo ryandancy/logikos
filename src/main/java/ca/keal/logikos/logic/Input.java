@@ -50,9 +50,13 @@ public class Input extends LogicComponent {
   }
   
   @Override
-  public boolean[] evaluate() {
+  public boolean[] evaluate(EvaluationListener listener) {
     // Supply the set value
-    return new boolean[] {value};
+    boolean[] output = new boolean[] {value};
+    if (listener != null) {
+      listener.onEvaluation(new EvaluationListener.Event(this, new boolean[0], output));
+    }
+    return output;
   }
   
   @Override

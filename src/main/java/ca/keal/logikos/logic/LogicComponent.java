@@ -67,10 +67,19 @@ public abstract class LogicComponent {
   
   /**
    * Find the output values for this LogicComponent.
+   * @param listener An {@link EvaluationListener} to be called on each successful evaluation. This may be {@code null}
+   *  if no listener is desired. Note that the listener will be called from bottom-to-top (from the earliest- to the
+   *  latest-updated component) as that is the order in which evaluations finish.
    * @return This {@link LogicComponent}'s output values for its current input values.
    */
-  // TODO implement an EvaluationListener
-  public abstract boolean[] evaluate();
+  public abstract boolean[] evaluate(EvaluationListener listener);
+  
+  /**
+   * @see #evaluate(EvaluationListener)
+   */
+  public boolean[] evaluate() {
+    return evaluate(null);
+  }
   
   /** @see Gate#markDirty() */
   public void markDirty() {}

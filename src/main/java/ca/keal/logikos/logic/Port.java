@@ -90,12 +90,12 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
      * sense to query an output port for the value of its connection, as the {@link Connection} will just call
      * the original {@link LogicComponent}.
      */
-    public boolean getInputValue() {
+    public boolean getInputValue(EvaluationListener listener) {
       Connection connection = getConnection();
       if (connection == null) {
         throw new IllegalStateException("Port had no connection when trying to get input value");
       }
-      return connection.getValue();
+      return connection.getValue(listener);
     }
     
   }

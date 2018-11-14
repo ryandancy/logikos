@@ -3,8 +3,8 @@ package ca.keal.logikos.logic;
 /**
  * A logic gate; i.e., a {@link LogicComponent} that has input and output {@link Port}s and performs a logical
  * operation. This class exists so that {@link Input} and {@link Output} are not weighed down by redundant memoization,
- * as memoization and the more complex {@link #evaluate()} implementation only make sense for gates and not for other
- * types of {@link LogicComponent}.
+ * as memoization and the more complex {@link #evaluate(EvaluationListener)} implementation only make sense for gates
+ * and not for other types of {@link LogicComponent}.
  */
 public abstract class Gate extends LogicComponent {
   
@@ -45,20 +45,22 @@ public abstract class Gate extends LogicComponent {
    * Find this {@link Gate}'s output values by evaluating all previous {@link LogicComponent}s.
    * @return This {@link Gate}'s output values for its current input values.
    */
-  // TODO EvaluationListener
   @Override
-  public boolean[] evaluate() {
+  public boolean[] evaluate(EvaluationListener listener) {
     if (memoizedOutput != null) return memoizedOutput;
     
     // Get all the input values
     Port.Input[] inputs = getInputs();
     boolean[] inputValues = new boolean[getNumInputs()];
     for (int i = 0; i < inputValues.length; i++) {
-      inputValues[i] = inputs[i].getInputValue();
+      inputValues[i] = inputs[i].getInputValue(listener);
     }
     
     // Evaluate them
     memoizedOutput = logicalEval(inputValues);
+    if (listener != null) {
+      listener.onEvaluation(new EvaluationListener.Event(this, inputValues, memoizedOutput));
+    }
     return memoizedOutput;
   }
   

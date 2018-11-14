@@ -5,9 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InOrder;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -185,8 +188,8 @@ class LogicEvaluationTest {
     output.evaluate();
     
     // Second gate should have memoized the output so first gate was only called once
-    verify(firstGate, times(1)).evaluate();
-    verify(secondGate, times(2)).evaluate();
+    verify(firstGate, times(1)).evaluate(null); // this version of evaluate() is called
+    verify(secondGate, times(2)).evaluate(null);
   }
   
   @DisplayName("Two gates in succession, last should memoize: 2 outputs")
@@ -209,8 +212,8 @@ class LogicEvaluationTest {
     output2.evaluate();
     
     // Second gate should have memoized the output so first gate was only called once
-    verify(firstGate, times(1)).evaluate();
-    verify(secondGate, times(2)).evaluate();
+    verify(firstGate, times(1)).evaluate(null);
+    verify(secondGate, times(2)).evaluate(null);
   }
   
   @DisplayName("Resetting input value voids memoization")
@@ -232,8 +235,112 @@ class LogicEvaluationTest {
     output.evaluate();
     
     // Both gates should have been called both times as they were dirtied with the second setValue()
-    verify(firstGate, times(2)).evaluate();
-    verify(secondGate, times(2)).evaluate();
+    verify(firstGate, times(2)).evaluate(null);
+    verify(secondGate, times(2)).evaluate(null);
+  }
+  
+  @DisplayName("EvaluationListener is called on evaluation for inputs, gates, and outputs")
+  @Test
+  void evaluationListenerCalled(@Mock EvaluationListener listener) {
+    Input input = new Input();
+    NotGate not = new NotGate();
+    Output output = new Output();
+    
+    input.getOutput(0).connectTo(not.getInput(0));
+    not.getOutput(0).connectTo(output.getInput(0));
+    
+    input.setValue(true);
+    output.evaluate(listener);
+    
+    boolean[] emptyArray = new boolean[0];
+    boolean[] trueArray = new boolean[] {true};
+    boolean[] falseArray = new boolean[] {false};
+    
+    verify(listener).onEvaluation(new EvaluationListener.Event(input, emptyArray, trueArray));
+    verify(listener).onEvaluation(new EvaluationListener.Event(not, trueArray, falseArray));
+    verify(listener).onEvaluation(new EvaluationListener.Event(output, falseArray, falseArray));
+  }
+  
+  @DisplayName("EvaluationListener is called in order from bottom to top")
+  @Test
+  void evaluationListenerOrder(@Mock EvaluationListener listener) {
+    // Same as before but in order
+    Input input = new Input();
+    NotGate not = new NotGate();
+    Output output = new Output();
+    
+    input.getOutput(0).connectTo(not.getInput(0));
+    not.getOutput(0).connectTo(output.getInput(0));
+    
+    input.setValue(true);
+    output.evaluate(listener);
+    
+    boolean[] emptyArray = new boolean[0];
+    boolean[] trueArray = new boolean[] {true};
+    boolean[] falseArray = new boolean[] {false};
+    
+    InOrder inOrder = inOrder(listener);
+    inOrder.verify(listener).onEvaluation(new EvaluationListener.Event(input, emptyArray, trueArray));
+    inOrder.verify(listener).onEvaluation(new EvaluationListener.Event(not, trueArray, falseArray));
+    inOrder.verify(listener).onEvaluation(new EvaluationListener.Event(output, falseArray, falseArray));
+    inOrder.verifyNoMoreInteractions();
+  }
+  
+  @DisplayName("EvaluationListener is not called for memoized values")
+  @Test
+  void evaluationListenerMemoization(@Mock EvaluationListener listener) {
+    // Input connected to 2 outputs, listener should only be called on input once
+    Input input = new Input();
+    Output output1 = new Output();
+    Output output2 = new Output();
+    
+    input.getOutput(0).connectTo(output1.getInput(0));
+    input.getOutput(0).connectTo(output2.getInput(0));
+    
+    input.setValue(false);
+    output1.evaluate(listener);
+    output2.evaluate(listener);
+    
+    boolean[] values = new boolean[] {false};
+    
+    InOrder inOrder = inOrder(listener);
+    inOrder.verify(listener).onEvaluation(new EvaluationListener.Event(input, new boolean[0], values));
+    inOrder.verify(listener).onEvaluation(new EvaluationListener.Event(output1, values, values));
+    inOrder.verify(listener).onEvaluation(new EvaluationListener.Event(output2, values, values));
+    inOrder.verifyNoMoreInteractions();
+  }
+  
+  @DisplayName("Resetting input value causes EvaluationListener to be called again")
+  @Test
+  void evaluationListenerMemoizationDirtying(@Mock EvaluationListener listener) {
+    // Input connected to 2 outputs, input value reset in between, each should be called twice
+    Input input = new Input();
+    Output output1 = new Output();
+    Output output2 = new Output();
+    
+    input.getOutput(0).connectTo(output1.getInput(0));
+    input.getOutput(0).connectTo(output2.getInput(0));
+    
+    input.setValue(false);
+    output1.evaluate(listener);
+    output2.evaluate(listener);
+    input.setValue(false);
+    output2.evaluate(listener);
+    output1.evaluate(listener);
+    
+    boolean[] values = new boolean[] {false};
+    EvaluationListener.Event inputEvent = new EvaluationListener.Event(input, new boolean[0], values);
+    EvaluationListener.Event output1Event = new EvaluationListener.Event(output1, values, values);
+    EvaluationListener.Event output2Event = new EvaluationListener.Event(output2, values, values);
+    
+    InOrder inOrder = inOrder(listener);
+    inOrder.verify(listener).onEvaluation(inputEvent);
+    inOrder.verify(listener).onEvaluation(output1Event);
+    inOrder.verify(listener).onEvaluation(output2Event);
+    inOrder.verify(listener).onEvaluation(inputEvent);
+    inOrder.verify(listener).onEvaluation(output2Event);
+    inOrder.verify(listener).onEvaluation(output1Event);
+    inOrder.verifyNoMoreInteractions();
   }
   
 }

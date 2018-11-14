@@ -27,8 +27,8 @@ public class Connection {
    * @return The "value" of this connection - the value of {@link Connection}'s output, or whether the wire represented
    * by this {@link Connection} is active or not.
    */
-  public boolean getValue() {
-    return output.getComponent().evaluate()[output.getPortNumber()];
+  public boolean getValue(EvaluationListener listener) {
+    return output.getComponent().evaluate(listener)[output.getPortNumber()];
   }
   
   @Override
