@@ -3,6 +3,7 @@ package ca.keal.logikos.field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A Field is the container for the entire logic model. It contains {@link FieldComponent}s and handles saving and
@@ -14,6 +15,13 @@ public class Field {
   
   public List<FieldComponent> getFieldComponents() {
     return Collections.unmodifiableList(fieldComponents);
+  }
+  
+  public List<InputFC> getInputFCs() {
+    return fieldComponents.stream()
+        .filter(fc -> fc instanceof InputFC)
+        .map(fc -> (InputFC) fc)
+        .collect(Collectors.toList());
   }
   
   public boolean addFieldComponent(FieldComponent component) {
