@@ -9,7 +9,6 @@ import ca.keal.logikos.logic.Input;
  * input is a button, a switch, or something else; the key binding is a key code which is bound to this input, and a
  * negative key binding (the default) means that no key is bound to this component.
  */
-// TODO evaluation, setting the value
 public class InputFC extends FieldComponent {
   
   private Type type;
