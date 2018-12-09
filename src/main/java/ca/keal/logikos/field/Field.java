@@ -18,9 +18,18 @@ public class Field {
   }
   
   public List<InputFC> getInputFCs() {
+    return getFCsOfType(InputFC.class);
+  }
+  
+  public List<OutputFC> getOutputFCs() {
+    return getFCsOfType(OutputFC.class);
+  }
+  
+  private <FC extends FieldComponent> List<FC> getFCsOfType(Class<FC> fcClass) {
+    //noinspection unchecked - why does `(FC) fc` even generate a warning? erasure is weird
     return fieldComponents.stream()
-        .filter(fc -> fc instanceof InputFC)
-        .map(fc -> (InputFC) fc)
+        .filter(fc -> fcClass.isAssignableFrom(fc.getClass()))
+        .map(fc -> (FC) fc)
         .collect(Collectors.toList());
   }
   
