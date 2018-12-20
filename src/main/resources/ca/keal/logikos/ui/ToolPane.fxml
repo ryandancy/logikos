@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<FlowPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="ca.keal.logikos.ui.ToolPaneController"
+          fx:id="toolPane"
+          prefWidth="300" prefHeight="600" />
