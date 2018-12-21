@@ -1,30 +1,17 @@
 package ca.keal.logikos.ui;
 
 import ca.keal.logikos.field.FieldComponent;
-import ca.keal.logikos.logic.AndGate;
-import ca.keal.logikos.logic.NandGate;
-import ca.keal.logikos.logic.NotGate;
-import ca.keal.logikos.logic.OrGate;
 
 /**
  * Represents a tool, which appears in the ToolPane and can be clicked on by the user and used to interact with the
- * field. Tools in {@link #ALL_TOOLS} are added to the ToolPane at startup. When the user clicks on the tool,
- * {@link #onSelect(LogikosApplication)} is run; when they click on another tool,
+ * field. Tools in {@link LogikosApplication#ALL_TOOLS} are added to the ToolPane at startup. When the user clicks on
+ * the tool, {@link #onSelect(LogikosApplication)} is run; when they click on another tool,
  * {@link #onDeselect(LogikosApplication)} is run. When the user, with this tool selected, hovers over a spot on the
  * field, {@link #onHover(LogikosApplication, double, double, FieldComponent)} is called, and when they click using this
  * tool {@link #onClick(LogikosApplication, double, double, FieldComponent)} is called. Tools also have a name and a
  * tooltip.
  */
 public abstract class Tool {
-  
-  // TODO more tools
-  // TODO specialized PlaceComponentTool subclasses for placing Inputs/Outputs
-  public static final Tool[] ALL_TOOLS = {
-      new PlaceComponentTool("AND", "Add an AND gate", AndGate::new),
-      new PlaceComponentTool("OR", "Add an OR gate", OrGate::new),
-      new PlaceComponentTool("NOT", "Add a NOT gate", NotGate::new),
-      new PlaceComponentTool("NAND", "Add a NAND gate", NandGate::new)
-  };
   
   private final String name;
   private final String tooltip;

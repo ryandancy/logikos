@@ -1,6 +1,10 @@
 package ca.keal.logikos.ui;
 
 import ca.keal.logikos.field.Field;
+import ca.keal.logikos.logic.AndGate;
+import ca.keal.logikos.logic.NandGate;
+import ca.keal.logikos.logic.NotGate;
+import ca.keal.logikos.logic.OrGate;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,14 +20,23 @@ import java.io.UncheckedIOException;
  */
 public class LogikosApplication extends Application {
   
+  // TODO more tools
+  // TODO specialized PlaceComponentTool subclasses for placing Inputs/Outputs
+  public static final Tool[] ALL_TOOLS = {
+      new PlaceComponentTool("AND", "Add an AND gate", AndGate::new),
+      new PlaceComponentTool("OR", "Add an OR gate", OrGate::new),
+      new PlaceComponentTool("NOT", "Add a NOT gate", NotGate::new),
+      new PlaceComponentTool("NAND", "Add a NAND gate", NandGate::new)
+  };
+  
   // These are loaded after this class is set as the controller for the RootLayout
-  @FXML private ToolPaneController toolPaneController;
-  @FXML private FieldPaneController fieldPaneController;
+  @FXML @SuppressWarnings("unused") private ToolPaneController toolPaneController;
+  @FXML @SuppressWarnings("unused") private FieldPaneController fieldPaneController;
   
   private Stage primaryStage;
   
   // The first tool is initially selected
-  private Tool selectedTool = Tool.ALL_TOOLS[0];
+  private Tool selectedTool = ALL_TOOLS[0];
   private final Field field = new Field(); // TODO saving & reloading
   
   public static void main(String[] args) {
