@@ -27,12 +27,12 @@ public class UIComponent extends Group {
   public static final Color BACKGROUND_COLOR = Color.WHITE;
   
   // Constants for drawing the component
-  public static final double PORT_SPACING = 7.0;
-  public static final double MIN_PORT_PADDING = 4.0;
-  public static final double MIN_NAME_PADDING = 8.0;
-  public static final double PORT_RADIUS = 2.0;
+  private static final double PORT_SPACING = 20.0;
+  private static final double MIN_PORT_PADDING = 6.0;
+  private static final double MIN_NAME_PADDING = 12.0;
+  private static final double PORT_RADIUS = 5.0;
   
-  public static final Font NAME_FONT = new Font("sans-serif", 14);
+  private static final Font NAME_FONT = new Font("sans-serif", 15);
   
   private final FieldComponent fieldComponent;
   
@@ -55,9 +55,9 @@ public class UIComponent extends Group {
     name.setFont(NAME_FONT);
     name.setFill(fgColor);
     double nameWidth = name.getLayoutBounds().getWidth();
-    double nameHeight = name.getLayoutBounds().getHeight();
+    double nameHeight = name.getLayoutBounds().getHeight() - name.getBaselineOffset();
     name.setX(-nameWidth / 2);
-    name.setY(-nameHeight / 2);
+    name.setY(nameHeight);
     
     // Find the proper size for the square with the number of inputs/outputs and name
     int numInputs = fieldComponent.getLogicComponent().getNumInputs();
@@ -65,7 +65,7 @@ public class UIComponent extends Group {
     double inputPortSpace = minPortSpace(numInputs);
     double outputPortSpace = minPortSpace(numOutputs);
     double nameSpace = nameWidth + 2 * MIN_NAME_PADDING;
-    double squareSize = Math.min(Math.min(inputPortSpace, outputPortSpace), nameSpace);
+    double squareSize = Math.max(Math.max(inputPortSpace, outputPortSpace), nameSpace);
     double squareCoord = -squareSize / 2; // the coord to centre it on (0, 0)
     
     // Construct the bounding square
@@ -89,7 +89,7 @@ public class UIComponent extends Group {
     // The circles are a set distance PORT_SPACING apart and are centred on each side of the rectangle
     // TODO fill in these circles when connected
     double x = left ? squareCoord : -squareCoord;
-    double startY = ((squareSize - (numPorts * PORT_SPACING)) / 2) + squareCoord;
+    double startY = ((squareSize - ((numPorts - 1) * PORT_SPACING)) / 2) + squareCoord;
     for (int i = 0; i < numPorts; i++) {
       Circle port = new Circle(PORT_RADIUS);
       port.setStroke(fgColor);
