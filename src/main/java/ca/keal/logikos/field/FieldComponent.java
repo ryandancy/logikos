@@ -29,9 +29,6 @@ public class FieldComponent {
   }
   
   public void setPosition(Position position) {
-    if (position == null) {
-      throw new NullPointerException("FieldComponent's Position cannot be null");
-    }
     this.position = position;
   }
   

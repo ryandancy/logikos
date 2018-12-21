@@ -7,11 +7,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 
 /**
- * The controller class for the ToolPane.
+ * The controller class for the ToolPane. It adds the {@link Tool}s to the list in the ToolPane at runtime.
  */
-public class ToolPaneController {
-  
-  private Tool selectedTool = null;
+public class ToolPaneController extends MainPaneController {
   
   @FXML private Pane toolPane;
   
@@ -25,14 +23,12 @@ public class ToolPaneController {
       btn.selectedProperty().addListener((observableValue, previouslySelected, nowSelected) -> {
         if (nowSelected) {
           tool.onSelect();
-          selectedTool = tool;
+          getApplication().setSelectedTool(tool);
         } else if (previouslySelected) {
           tool.onDeselect();
         }
       });
-      if (tool == Tool.ALL_TOOLS[0]) {
-        btn.setSelected(true);
-      }
+      
       btn.setUserData(tool);
       btn.setToggleGroup(group);
       toolPane.getChildren().add(btn);

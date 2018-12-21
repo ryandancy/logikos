@@ -7,8 +7,8 @@
            prefHeight="600" prefWidth="1000"
            dividerPositions="0.3">
   
-  <fx:include source="ToolPane.fxml" />
+  <fx:include fx:id="toolPane" source="ToolPane.fxml" />
   
-  <fx:include source="FieldPane.fxml" />
+  <fx:include fx:id="fieldPane" source="FieldPane.fxml" />
   
 </SplitPane>
