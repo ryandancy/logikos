@@ -25,6 +25,13 @@ public class FieldPaneController extends MainPaneController {
     callSelectedToolHook(e, true);
   }
   
+  @FXML
+  @SuppressWarnings("unused")
+  private void onLeavePane(MouseEvent e) {
+    // Call the selected tool's leave hook
+    getApplication().getSelectedTool().onLeavePane(getApplication());
+  }
+  
   // Call the selected tool's click hook if click is true or its hover hook if click is false
   private void callSelectedToolHook(MouseEvent e, boolean click) {
     // Get the field component it's over

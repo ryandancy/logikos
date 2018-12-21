@@ -62,4 +62,20 @@ public class PlaceComponentTool extends Tool {
     fieldPane.getChildren().add(newUIC);
   }
   
+  @Override
+  public void onDeselect(LogikosApplication app) {
+    super.onDeselect(app);
+    removeGhost(app);
+  }
+  
+  @Override
+  public void onLeavePane(LogikosApplication app) {
+    super.onLeavePane(app);
+    removeGhost(app);
+  }
+  
+  private void removeGhost(LogikosApplication app) {
+    app.getFieldPaneController().getFieldPane().getChildren().remove(ghost);
+  }
+  
 }

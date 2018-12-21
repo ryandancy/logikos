@@ -22,10 +22,10 @@ public class ToolPaneController extends MainPaneController {
       btn.setTooltip(new Tooltip(tool.getTooltip()));
       btn.selectedProperty().addListener((observableValue, previouslySelected, nowSelected) -> {
         if (nowSelected) {
-          tool.onSelect();
+          tool.onSelect(getApplication());
           getApplication().setSelectedTool(tool);
         } else if (previouslySelected) {
-          tool.onDeselect();
+          tool.onDeselect(getApplication());
         }
       });
       

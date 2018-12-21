@@ -9,10 +9,11 @@ import ca.keal.logikos.logic.OrGate;
 /**
  * Represents a tool, which appears in the ToolPane and can be clicked on by the user and used to interact with the
  * field. Tools in {@link #ALL_TOOLS} are added to the ToolPane at startup. When the user clicks on the tool,
- * {@link #onSelect()} is run; when they click on another tool, {@link #onDeselect()} is run. When the user, with this
- * tool selected, hovers over a spot on the field, {@link #onHover(LogikosApplication, double, double, FieldComponent)}
- * is called, and when they click using this tool {@link #onClick(LogikosApplication, double, double, FieldComponent)}
- * is called. Tools also have a name and a tooltip.
+ * {@link #onSelect(LogikosApplication)} is run; when they click on another tool,
+ * {@link #onDeselect(LogikosApplication)} is run. When the user, with this tool selected, hovers over a spot on the
+ * field, {@link #onHover(LogikosApplication, double, double, FieldComponent)} is called, and when they click using this
+ * tool {@link #onClick(LogikosApplication, double, double, FieldComponent)} is called. Tools also have a name and a
+ * tooltip.
  */
 public abstract class Tool {
   
@@ -51,12 +52,14 @@ public abstract class Tool {
   /**
    * Called when this {@link Tool} is selected.
    */
-  public void onSelect() {}
+  @SuppressWarnings("unused")
+  public void onSelect(LogikosApplication app) {}
   
   /**
    * Called when the user clicks on another {@link Tool} from this one, and this tool is no longer active.
    */
-  public void onDeselect() {}
+  @SuppressWarnings("unused")
+  public void onDeselect(LogikosApplication app) {}
   
   /**
    * Called when the user hovers over a position on the field.
@@ -77,5 +80,11 @@ public abstract class Tool {
    *  mouse did not click on a component.
    */
   public abstract void onClick(LogikosApplication app, double paneX, double paneY, FieldComponent clickedFC);
+  
+  /**
+   * Called when the mouse leaves the FieldPane.
+   */
+  @SuppressWarnings("unused")
+  public void onLeavePane(LogikosApplication app) {}
   
 }

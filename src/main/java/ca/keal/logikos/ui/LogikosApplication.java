@@ -47,7 +47,7 @@ public class LogikosApplication extends Application {
     }
     
     // Tell the first tool that it's been selected
-    getSelectedTool().onSelect();
+    getSelectedTool().onSelect(this);
   }
   
   @FXML

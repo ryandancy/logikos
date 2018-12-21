@@ -9,4 +9,5 @@
       fx:id="fieldPane"
       prefHeight="400.0" prefWidth="600.0"
       onMouseMoved="#onMouseMove"
-      onMouseClicked="#onClick" />
+      onMouseClicked="#onClick"
+      onMouseExited="#onLeavePane" />
