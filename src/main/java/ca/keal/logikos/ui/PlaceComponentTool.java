@@ -3,7 +3,6 @@ package ca.keal.logikos.ui;
 import ca.keal.logikos.field.FieldComponent;
 import ca.keal.logikos.field.Position;
 import ca.keal.logikos.logic.LogicComponent;
-import javafx.scene.layout.Pane;
 
 import java.util.function.Supplier;
 
@@ -28,38 +27,40 @@ public class PlaceComponentTool extends Tool {
   
   @Override
   public void onHover(LogikosApplication app, double paneX, double paneY, FieldComponent hoveredFC) {
-    Pane fieldPane = app.getFieldPaneController().getFieldPane();
+    PannablePane fieldPane = app.getFieldPaneController().getFieldPane();
     
     if (hoveredFC != null) {
       // don't display ghost component over another component
-      fieldPane.getChildren().remove(ghost);
+      fieldPane.getContentChildren().remove(ghost);
       return;
     }
     
     // Display the ghost
-    ghost.setLayoutX(paneX);
-    ghost.setLayoutY(paneY);
+    ghost.setLayoutX(fieldPane.paneToRealX(paneX));
+    ghost.setLayoutY(fieldPane.paneToRealY(paneY));
     
-    if (!fieldPane.getChildren().contains(ghost)) {
-      fieldPane.getChildren().add(ghost);
+    if (!fieldPane.getContentChildren().contains(ghost)) {
+      fieldPane.getContentChildren().add(ghost);
     }
   }
   
   @Override
   public void onClick(LogikosApplication app, double paneX, double paneY, FieldComponent clickedFC) {
-    Pane fieldPane = app.getFieldPaneController().getFieldPane();
+    PannablePane fieldPane = app.getFieldPaneController().getFieldPane();
     
-    fieldPane.getChildren().remove(ghost);
+    fieldPane.getContentChildren().remove(ghost);
     if (clickedFC != null) return; // don't place on another component
     
-    // TODO convert from pane x/y to field x/y
-    FieldComponent newFC = new FieldComponent(componentSupplier.get(), new Position(paneX, paneY));
+    double realX = fieldPane.paneToRealX(paneX);
+    double realY = fieldPane.paneToRealY(paneY);
+    
+    FieldComponent newFC = new FieldComponent(componentSupplier.get(), new Position(realX, realY));
     app.getField().addFieldComponent(newFC);
     
     UIComponent newUIC = new UIComponent(newFC, getName(), false);
-    newUIC.setLayoutX(paneX);
-    newUIC.setLayoutY(paneY);
-    fieldPane.getChildren().add(newUIC);
+    newUIC.setLayoutX(realX);
+    newUIC.setLayoutY(realY);
+    fieldPane.getContentChildren().add(newUIC);
   }
   
   @Override
@@ -75,7 +76,7 @@ public class PlaceComponentTool extends Tool {
   }
   
   private void removeGhost(LogikosApplication app) {
-    app.getFieldPaneController().getFieldPane().getChildren().remove(ghost);
+    app.getFieldPaneController().getFieldPane().getContentChildren().remove(ghost);
   }
   
 }

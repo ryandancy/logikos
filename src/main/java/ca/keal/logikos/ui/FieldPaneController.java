@@ -4,14 +4,13 @@ import ca.keal.logikos.field.FieldComponent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 
 /**
  * The controller class for the FieldPane.
  */
 public class FieldPaneController extends MainPaneController {
   
-  @FXML private Pane fieldPane;
+  @FXML private PannablePane fieldPane;
   
   @FXML
   private void onMouseMove(MouseEvent e) {
@@ -53,7 +52,7 @@ public class FieldPaneController extends MainPaneController {
     }
   }
   
-  public Pane getFieldPane() {
+  public PannablePane getFieldPane() {
     return fieldPane;
   }
   

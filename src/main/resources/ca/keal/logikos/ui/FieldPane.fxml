@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
+<?import ca.keal.logikos.ui.PannablePane?>
 
-<!-- TODO make this zoomable/pannable -->
-<Pane xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="ca.keal.logikos.ui.FieldPaneController"
-      fx:id="fieldPane"
-      prefHeight="400.0" prefWidth="600.0"
-      onMouseMoved="#onMouseMove"
-      onMouseClicked="#onClick"
-      onMouseExited="#onLeavePane" />
+<PannablePane xmlns="http://javafx.com/javafx"
+              xmlns:fx="http://javafx.com/fxml"
+              fx:controller="ca.keal.logikos.ui.FieldPaneController"
+              fx:id="fieldPane"
+              prefHeight="400.0" prefWidth="600.0"
+              onMouseMoved="#onMouseMove"
+              onMouseClicked="#onClick"
+              onMouseExited="#onLeavePane" />
