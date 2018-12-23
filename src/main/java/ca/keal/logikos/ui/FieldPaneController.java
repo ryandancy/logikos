@@ -3,6 +3,7 @@ package ca.keal.logikos.ui;
 import ca.keal.logikos.field.FieldComponent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 /**
@@ -20,8 +21,10 @@ public class FieldPaneController extends MainPaneController {
   
   @FXML
   private void onClick(MouseEvent e) {
-    // Call the selected tool's click hook
-    callSelectedToolHook(e, true);
+    // Call the selected tool's click hook for the left mouse button
+    if (e.getButton() == MouseButton.PRIMARY) {
+      callSelectedToolHook(e, true);
+    }
   }
   
   @FXML
