@@ -1,6 +1,5 @@
 package ca.keal.logikos.ui;
 
-import ca.keal.logikos.field.FieldComponent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.input.MouseButton;
@@ -14,13 +13,13 @@ public class FieldPaneController {
   @FXML private PannablePane fieldPane;
   
   @FXML
-  private void onMouseMove(MouseEvent e) {
+  public void onMouseMove(MouseEvent e) {
     // Call the selected tool's hover hook
     callSelectedToolHook(e, false);
   }
   
   @FXML
-  private void onClick(MouseEvent e) {
+  public void onClick(MouseEvent e) {
     // Call the selected tool's click hook for the left mouse button
     if (e.getButton() == MouseButton.PRIMARY) {
       callSelectedToolHook(e, true);
@@ -37,9 +36,9 @@ public class FieldPaneController {
   // Call the selected tool's click hook if click is true or its hover hook if click is false
   private void callSelectedToolHook(MouseEvent e, boolean click) {
     // Get the field component it's over
-    FieldComponent hoveredFC = null;
+    UIComponent overComponent = null;
     if (e.getSource() instanceof UIComponent) {
-      hoveredFC = ((UIComponent) e.getSource()).getFieldComponent();
+      overComponent = (UIComponent) e.getSource();
     }
     
     // Get the coordinates relative to the FieldPane
@@ -49,9 +48,9 @@ public class FieldPaneController {
     
     // Call the hook
     if (click) {
-      Logikos.getInstance().getSelectedTool().onClick(relX, relY, hoveredFC);
+      Logikos.getInstance().getSelectedTool().onClick(relX, relY, overComponent);
     } else {
-      Logikos.getInstance().getSelectedTool().onHover(relX, relY, hoveredFC);
+      Logikos.getInstance().getSelectedTool().onHover(relX, relY, overComponent);
     }
   }
   

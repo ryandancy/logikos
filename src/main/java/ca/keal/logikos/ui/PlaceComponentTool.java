@@ -6,6 +6,11 @@ import ca.keal.logikos.logic.LogicComponent;
 
 import java.util.function.Supplier;
 
+/**
+ * A {@link Tool} which places a {@link UIComponent}. When the user clicks on the FieldPane, a {@link UIComponent}
+ * (fully added to the {@code Field}) appears; when they hover over the FieldPane, a "ghost" {@link UIComponent} is
+ * shown to show where a {@link UIComponent} would appear if they click.
+ */
 public class PlaceComponentTool extends Tool {
   
   private final Supplier<LogicComponent> componentSupplier;
@@ -26,18 +31,19 @@ public class PlaceComponentTool extends Tool {
   }
   
   @Override
-  public void onHover(double paneX, double paneY, FieldComponent hoveredFC) {
+  public void onHover(double paneX, double paneY, UIComponent hoveredComponent) {
     PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
     
-    if (hoveredFC != null) {
+    if (hoveredComponent != null) {
       // don't display ghost component over another component
-      fieldPane.getContentChildren().remove(ghost);
+      ghost.setVisible(false);
       return;
     }
     
     // Display the ghost
     ghost.setLayoutX(fieldPane.paneToRealX(paneX));
     ghost.setLayoutY(fieldPane.paneToRealY(paneY));
+    ghost.setVisible(true);
     
     if (!fieldPane.getContentChildren().contains(ghost)) {
       fieldPane.getContentChildren().add(ghost);
@@ -45,11 +51,11 @@ public class PlaceComponentTool extends Tool {
   }
   
   @Override
-  public void onClick(double paneX, double paneY, FieldComponent clickedFC) {
+  public void onClick(double paneX, double paneY, UIComponent clickedComponent) {
     PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
     
-    fieldPane.getContentChildren().remove(ghost);
-    if (clickedFC != null) return; // don't place on another component
+    ghost.setVisible(false);
+    if (clickedComponent != null) return; // don't place on another component
     
     double realX = fieldPane.paneToRealX(paneX);
     double realY = fieldPane.paneToRealY(paneY);

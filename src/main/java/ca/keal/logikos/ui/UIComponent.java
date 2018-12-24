@@ -3,6 +3,7 @@ package ca.keal.logikos.ui;
 import ca.keal.logikos.field.FieldComponent;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -41,13 +42,29 @@ public class UIComponent extends Group {
   
   public UIComponent(FieldComponent fieldComponent, String displayName, boolean isGhost) {
     this.fieldComponent = fieldComponent;
-    
+  
     // Ghost components are just graphical features
     setMouseTransparent(isGhost);
     
+    buildGraphics(displayName, isGhost);
+    setupEventHandling();
+  }
+  
+  private void setupEventHandling() {
+    // Pass mouse events along to the FieldPaneController
+    addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
+      Logikos.getInstance().getFieldPaneController().onClick(e);
+      e.consume();
+    });
+    addEventFilter(MouseEvent.MOUSE_MOVED, e -> {
+      Logikos.getInstance().getFieldPaneController().onMouseMove(e);
+      e.consume();
+    });
+  }
+  
+  private void buildGraphics(String displayName, boolean isGhost) {
     // TODO custom graphics for non-UserGate FieldComponents
     
-    // Build the graphics
     Color fgColor = isGhost ? GHOST_COLOR : FOREGROUND_COLOR;
     
     // Construct the name
