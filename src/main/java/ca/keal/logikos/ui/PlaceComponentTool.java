@@ -3,6 +3,7 @@ package ca.keal.logikos.ui;
 import ca.keal.logikos.field.FieldComponent;
 import ca.keal.logikos.field.Position;
 import ca.keal.logikos.logic.LogicComponent;
+import javafx.scene.Node;
 
 import java.util.function.Supplier;
 
@@ -34,16 +35,10 @@ public class PlaceComponentTool extends Tool {
   public void onHover(double paneX, double paneY, UIComponent hoveredComponent) {
     PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
     
-    if (hoveredComponent != null) {
-      // don't display ghost component over another component
-      ghost.setVisible(false);
-      return;
-    }
-    
     // Display the ghost
     ghost.setLayoutX(fieldPane.paneToRealX(paneX));
     ghost.setLayoutY(fieldPane.paneToRealY(paneY));
-    ghost.setVisible(true);
+    ghost.setVisible(!doesGhostIntersectAnything());
     
     if (!fieldPane.getContentChildren().contains(ghost)) {
       fieldPane.getContentChildren().add(ghost);
@@ -55,7 +50,10 @@ public class PlaceComponentTool extends Tool {
     PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
     
     ghost.setVisible(false);
-    if (clickedComponent != null) return; // don't place on another component
+    
+    // Don't place on another component
+    // Note that the ghost's position is constantly set by onHover() so we don't need to do it here
+    if (clickedComponent != null || doesGhostIntersectAnything()) return;
     
     double realX = fieldPane.paneToRealX(paneX);
     double realY = fieldPane.paneToRealY(paneY);
@@ -67,6 +65,17 @@ public class PlaceComponentTool extends Tool {
     newUIC.setLayoutX(realX);
     newUIC.setLayoutY(realY);
     fieldPane.getContentChildren().add(newUIC);
+  }
+  
+  private boolean doesGhostIntersectAnything() {
+    PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
+    for (Node child : fieldPane.getContentChildren()) {
+      if (child != ghost && child instanceof UIComponent
+          && ghost.intersects(ghost.sceneToLocal(child.localToScene(child.getBoundsInLocal())))) {
+        return true;
+      }
+    }
+    return false;
   }
   
   @Override
