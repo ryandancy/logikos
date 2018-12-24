@@ -16,9 +16,19 @@ import java.io.UncheckedIOException;
 
 /**
  * The main JavaFX application. Also the controller for the RootLayout. It contains some global data, such as what tool
- * is selected and the {@link Field}.
+ * is selected and the {@link Field}. This class is a singleton so that every UI class has access to its data - its
+ * instance is created automatically when loading and can be retrieved with {@link #getInstance()}.
  */
-public class LogikosApplication extends Application {
+public class Logikos extends Application {
+  
+  private static Logikos instance = null;
+  
+  /**
+   * @return The {@link Logikos} singleton.
+   */
+  public static Logikos getInstance() {
+    return instance;
+  }
   
   // TODO more tools
   // TODO specialized PlaceComponentTool subclasses for placing Inputs/Outputs
@@ -38,6 +48,17 @@ public class LogikosApplication extends Application {
   // The first tool is initially selected
   private Tool selectedTool = ALL_TOOLS[0];
   private final Field field = new Field(); // TODO saving & reloading
+  
+  public Logikos() {
+    super();
+    // synchronizing in case multiple threads call this at the same time
+    synchronized (Logikos.class) {
+      if (instance != null) {
+        throw new IllegalStateException("Logikos is a singleton and cannot be instantiated more than once");
+      }
+      instance = this;
+    }
+  }
   
   public static void main(String[] args) {
     launch(args);
@@ -60,14 +81,7 @@ public class LogikosApplication extends Application {
     }
     
     // Tell the first tool that it's been selected
-    getSelectedTool().onSelect(this);
-  }
-  
-  @FXML
-  private void initialize() {
-    // Inject this Application into each controller
-    toolPaneController.setApplication(this);
-    fieldPaneController.setApplication(this);
+    getSelectedTool().onSelect();
   }
   
   public Stage getPrimaryStage() {

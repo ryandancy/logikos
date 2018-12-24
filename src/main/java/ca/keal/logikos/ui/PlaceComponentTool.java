@@ -26,8 +26,8 @@ public class PlaceComponentTool extends Tool {
   }
   
   @Override
-  public void onHover(LogikosApplication app, double paneX, double paneY, FieldComponent hoveredFC) {
-    PannablePane fieldPane = app.getFieldPaneController().getFieldPane();
+  public void onHover(double paneX, double paneY, FieldComponent hoveredFC) {
+    PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
     
     if (hoveredFC != null) {
       // don't display ghost component over another component
@@ -45,8 +45,8 @@ public class PlaceComponentTool extends Tool {
   }
   
   @Override
-  public void onClick(LogikosApplication app, double paneX, double paneY, FieldComponent clickedFC) {
-    PannablePane fieldPane = app.getFieldPaneController().getFieldPane();
+  public void onClick(double paneX, double paneY, FieldComponent clickedFC) {
+    PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
     
     fieldPane.getContentChildren().remove(ghost);
     if (clickedFC != null) return; // don't place on another component
@@ -55,7 +55,7 @@ public class PlaceComponentTool extends Tool {
     double realY = fieldPane.paneToRealY(paneY);
     
     FieldComponent newFC = new FieldComponent(componentSupplier.get(), new Position(realX, realY));
-    app.getField().addFieldComponent(newFC);
+    Logikos.getInstance().getField().addFieldComponent(newFC);
     
     UIComponent newUIC = new UIComponent(newFC, getName(), false);
     newUIC.setLayoutX(realX);
@@ -64,19 +64,20 @@ public class PlaceComponentTool extends Tool {
   }
   
   @Override
-  public void onDeselect(LogikosApplication app) {
-    super.onDeselect(app);
-    removeGhost(app);
+  public void onDeselect() {
+    super.onDeselect();
+    removeGhost();
   }
   
   @Override
-  public void onLeavePane(LogikosApplication app) {
-    super.onLeavePane(app);
-    removeGhost(app);
+  public void onLeavePane() {
+    super.onLeavePane();
+    removeGhost();
   }
   
-  private void removeGhost(LogikosApplication app) {
-    app.getFieldPaneController().getFieldPane().getContentChildren().remove(ghost);
+  private void removeGhost() {
+    // holy method chaining, batman!
+    Logikos.getInstance().getFieldPaneController().getFieldPane().getContentChildren().remove(ghost);
   }
   
 }

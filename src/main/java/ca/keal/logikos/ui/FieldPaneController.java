@@ -9,7 +9,7 @@ import javafx.scene.input.MouseEvent;
 /**
  * The controller class for the FieldPane.
  */
-public class FieldPaneController extends MainPaneController {
+public class FieldPaneController {
   
   @FXML private PannablePane fieldPane;
   
@@ -31,7 +31,7 @@ public class FieldPaneController extends MainPaneController {
   @SuppressWarnings("unused")
   private void onLeavePane(MouseEvent e) {
     // Call the selected tool's leave hook
-    getApplication().getSelectedTool().onLeavePane(getApplication());
+    Logikos.getInstance().getSelectedTool().onLeavePane();
   }
   
   // Call the selected tool's click hook if click is true or its hover hook if click is false
@@ -49,9 +49,9 @@ public class FieldPaneController extends MainPaneController {
     
     // Call the hook
     if (click) {
-      getApplication().getSelectedTool().onClick(getApplication(), relX, relY, hoveredFC);
+      Logikos.getInstance().getSelectedTool().onClick(relX, relY, hoveredFC);
     } else {
-      getApplication().getSelectedTool().onHover(getApplication(), relX, relY, hoveredFC);
+      Logikos.getInstance().getSelectedTool().onHover(relX, relY, hoveredFC);
     }
   }
   
