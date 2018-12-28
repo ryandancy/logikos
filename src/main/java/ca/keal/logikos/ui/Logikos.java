@@ -35,6 +35,7 @@ public class Logikos extends Application {
   // TODO more tools
   // TODO specialized PlaceComponentTool subclasses for placing Inputs/Outputs
   public static final Tool[] ALL_TOOLS = {
+      new SelectTool(),
       new PlaceComponentTool("AND", "Add an AND gate", AndGate::new),
       new PlaceComponentTool("OR", "Add an OR gate", OrGate::new),
       new PlaceComponentTool("NOT", "Add a NOT gate", NotGate::new),

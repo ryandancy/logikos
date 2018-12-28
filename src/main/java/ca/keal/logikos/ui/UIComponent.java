@@ -3,6 +3,7 @@ package ca.keal.logikos.ui;
 import ca.keal.logikos.field.FieldComponent;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -33,12 +34,17 @@ public class UIComponent extends Group {
   private static final double MIN_NAME_PADDING = 12.0;
   private static final double PORT_RADIUS = 5.0;
   
+  private static final double SELECTED_DROP_SHADOW_RADIUS = 10.0;
+  
   private static final Font NAME_FONT = new Font("sans-serif", 15);
   
   private final FieldComponent fieldComponent;
   
   private final List<Node> inputPorts = new ArrayList<>();
   private final List<Node> outputPorts = new ArrayList<>();
+  
+  private Color fgColor;
+  private Rectangle square;
   
   public UIComponent(FieldComponent fieldComponent, String displayName, boolean isGhost) {
     this.fieldComponent = fieldComponent;
@@ -65,7 +71,7 @@ public class UIComponent extends Group {
   private void buildGraphics(String displayName, boolean isGhost) {
     // TODO custom graphics for non-UserGate FieldComponents
     
-    Color fgColor = isGhost ? GHOST_COLOR : FOREGROUND_COLOR;
+    fgColor = isGhost ? GHOST_COLOR : FOREGROUND_COLOR;
     
     // Construct the name
     Text name = new Text(displayName);
@@ -86,7 +92,7 @@ public class UIComponent extends Group {
     double squareCoord = -squareSize / 2; // the coord to centre it on (0, 0)
     
     // Construct the bounding square
-    Rectangle square = new Rectangle(squareSize, squareSize);
+    square = new Rectangle(squareSize, squareSize);
     square.setX(squareCoord);
     square.setY(squareCoord);
     square.setStroke(fgColor);
@@ -120,6 +126,20 @@ public class UIComponent extends Group {
   
   private double minPortSpace(int numPorts) {
     return ((numPorts - 1) * PORT_SPACING) + (2 * MIN_PORT_PADDING);
+  }
+  
+  /**
+   * Add a visual indication that this {@link UIComponent} is "selected" (currently a drop shadow).
+   */
+  public void setSelected() {
+    square.setEffect(new DropShadow(SELECTED_DROP_SHADOW_RADIUS, fgColor));
+  }
+  
+  /**
+   * Remove the visual indication that this {@link UIComponent} is "selected" (currently a drop shadow).
+   */
+  public void setDeselected() {
+    square.setEffect(null);
   }
   
   public FieldComponent getFieldComponent() {
