@@ -51,6 +51,7 @@ public class SelectTool extends Tool {
     if (selectedComponent == null) return;
     Logikos.getInstance().getField().removeFieldComponent(selectedComponent.getFieldComponent());
     Logikos.getInstance().getFieldPaneController().getFieldPane().getContentChildren().remove(selectedComponent);
+    deselectComponent();
   }
   
 }
