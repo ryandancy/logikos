@@ -15,14 +15,14 @@ public class FieldPaneController {
   @FXML
   public void onMouseMove(MouseEvent e) {
     // Call the selected tool's hover hook
-    callSelectedToolHook(e, false);
+    callSelectedToolMouseHook(e, false);
   }
   
   @FXML
   public void onClick(MouseEvent e) {
     // Call the selected tool's click hook for the left mouse button
     if (e.getButton() == MouseButton.PRIMARY) {
-      callSelectedToolHook(e, true);
+      callSelectedToolMouseHook(e, true);
     }
   }
   
@@ -34,7 +34,7 @@ public class FieldPaneController {
   }
   
   // Call the selected tool's click hook if click is true or its hover hook if click is false
-  private void callSelectedToolHook(MouseEvent e, boolean click) {
+  private void callSelectedToolMouseHook(MouseEvent e, boolean click) {
     // Get the field component it's over
     UIComponent overComponent = null;
     if (e.getSource() instanceof UIComponent) {

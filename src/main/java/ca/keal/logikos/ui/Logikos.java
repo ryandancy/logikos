@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.io.UncheckedIOException;
  * is selected and the {@link Field}. This class is a singleton so that every UI class has access to its data - its
  * instance is created automatically when loading and can be retrieved with {@link #getInstance()}.
  */
+// TODO this should *probably* not also be the controller for RootLayout
 public class Logikos extends Application {
   
   private static Logikos instance = null;
@@ -75,6 +77,8 @@ public class Logikos extends Application {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("RootLayout.fxml"));
       loader.setController(this);
       primaryStage.setScene(new Scene(loader.load()));
+      primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyPress); // handle key presses globally
+      primaryStage.requestFocus();
       primaryStage.show();
     } catch (IOException e) {
       throw new UncheckedIOException(e);
@@ -109,6 +113,11 @@ public class Logikos extends Application {
   
   public ToolPaneController getToolPaneController() {
     return toolPaneController;
+  }
+  
+  // handle global key presses (just delegate to the selected tool)
+  private void onKeyPress(KeyEvent e) {
+    getSelectedTool().onKeyPress(e);
   }
   
 }

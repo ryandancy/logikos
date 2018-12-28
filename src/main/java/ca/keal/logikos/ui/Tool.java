@@ -1,14 +1,21 @@
 package ca.keal.logikos.ui;
 
 import ca.keal.logikos.field.FieldComponent;
+import javafx.scene.input.KeyEvent;
 
 /**
  * Represents a tool, which appears in the ToolPane and can be clicked on by the user and used to interact with the
- * field. Tools in {@link Logikos#ALL_TOOLS} are added to the ToolPane at startup. When the user clicks on the tool,
- * {@link #onSelect()} is run; when they click on another tool, {@link #onDeselect()} is run. When the user, with this
- * tool selected, hovers over a spot on the field, {@link #onHover(double, double, UIComponent)} is called, and when
- * they click using this tool {@link #onClick(double, double, UIComponent)} is called. Tools also have a name and a
- * tooltip.
+ * field.
+ * 
+ * Tools in {@link Logikos#ALL_TOOLS} are added to the ToolPane at startup.
+ * 
+ * There are several hooks that subclasses may override. When the user clicks on the tool, {@link #onSelect()} is run;
+ * when they click on another tool, {@link #onDeselect()} is run. When the user, with this tool selected, hovers over a
+ * spot on the field, {@link #onHover(double, double, UIComponent)} is called, and when they click using this tool
+ * {@link #onClick(double, double, UIComponent)} is called. When their mouse leaves the pane, {@link #onLeavePane()} is
+ * called. When the user presses a key with this tool selected, {@link #onKeyPress(int)} is called.
+ * 
+ * Tools also have a name and a tooltip.
  */
 public abstract class Tool {
   
@@ -38,7 +45,6 @@ public abstract class Tool {
   /**
    * Called when this {@link Tool} is selected.
    */
-  @SuppressWarnings("unused")
   public void onSelect() {}
   
   /**
@@ -53,7 +59,7 @@ public abstract class Tool {
    * @param hoveredComponent The {@link UIComponent}, if any, over which the mouse is hovering. This may be null if the
    *  mouse did not hover over a component.
    */
-  public abstract void onHover(double paneX, double paneY, UIComponent hoveredComponent);
+  public void onHover(double paneX, double paneY, UIComponent hoveredComponent) {}
   
   /**
    * Called when the user clicks on a position on the field.
@@ -62,7 +68,14 @@ public abstract class Tool {
    * @param clickedComponent The {@link FieldComponent}, if any, on which the mouse clicked. This may be null if the
    *  mouse did not click on a component.
    */
-  public abstract void onClick(double paneX, double paneY, UIComponent clickedComponent);
+  public void onClick(double paneX, double paneY, UIComponent clickedComponent) {}
+  
+  /**
+   * Called when the user presses a key.
+   * @param e The {@link KeyEvent} that triggered this call.
+   */
+  @SuppressWarnings("unused")
+  public void onKeyPress(KeyEvent e) {}
   
   /**
    * Called when the mouse leaves the FieldPane.
