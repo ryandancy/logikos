@@ -2,16 +2,30 @@ package ca.keal.logikos.ui;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 
 /**
- * A Pane that can be panned with the right mouse button. Used for the FieldPane.
+ * A Pane that can be panned with the right mouse button with a grid in the background. Used for the FieldPane.
  */
 // TODO zooming with the scroll wheel
 public class PannablePane extends Pane {
+  
+  // for some reason the thickness of the grid is determined by thickness / cell size
+  private static final double GRID_SIZE = 30.0;
+  private static final double GRID_THICKNESS_PX = 1;
+  private static final double GRID_THICKNESS_REL = GRID_THICKNESS_PX / GRID_SIZE;
+  private static final Color GRID_COLOR = Color.gray(0.4);
   
   private Pane content = new Pane();
   
@@ -33,10 +47,29 @@ public class PannablePane extends Pane {
     });
     addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> {
       if (!e.isSecondaryButtonDown()) return; // right mouse button pans
-      content.setTranslateX(translateAnchorX + e.getSceneX() - panAnchorX);
-      content.setTranslateY(translateAnchorY + e.getSceneY() - panAnchorY);
+      double newX = translateAnchorX + e.getSceneX() - panAnchorX;
+      double newY = translateAnchorY + e.getSceneY() - panAnchorY;
+      content.setTranslateX(newX);
+      content.setTranslateY(newY);
+      updateGrid(newX, newY);
       e.consume();
     });
+    
+    updateGrid(0, 0);
+  }
+  
+  private void updateGrid(double offsetX, double offsetY) {
+    // Set the background as a grid offset by the parameters
+    setBackground(new Background(
+        new BackgroundFill(new LinearGradient(
+            offsetX + 0.5, 0.0, offsetX + GRID_SIZE + 0.5, 0.0, false, CycleMethod.REPEAT,
+            new Stop(GRID_THICKNESS_REL, GRID_COLOR), new Stop(GRID_THICKNESS_REL, Color.TRANSPARENT)
+        ), CornerRadii.EMPTY, Insets.EMPTY),
+        new BackgroundFill(new LinearGradient(
+            0.0, offsetY + 0.5, 0.0, offsetY + GRID_SIZE + 0.5, false, CycleMethod.REPEAT,
+            new Stop(GRID_THICKNESS_REL, GRID_COLOR), new Stop(GRID_THICKNESS_REL, Color.TRANSPARENT)
+        ), CornerRadii.EMPTY, Insets.EMPTY)
+    ));
   }
   
   public ObservableList<Node> getContentChildren() {
