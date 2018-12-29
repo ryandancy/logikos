@@ -57,13 +57,31 @@ public class UIComponent extends Group {
   }
   
   private void setupEventHandling() {
-    // Pass mouse events along to the FieldPaneController
-    addEventFilter(MouseEvent.MOUSE_CLICKED, e -> {
-      Logikos.getInstance().getFieldPaneController().onClick(e);
+    // Pass mouse events along to the FieldPaneController; the source is then this instead of the FieldPane
+    addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+      Logikos.getInstance().getFieldPaneController().onClick(e, null);
       e.consume();
     });
-    addEventFilter(MouseEvent.MOUSE_MOVED, e -> {
-      Logikos.getInstance().getFieldPaneController().onMouseMove(e);
+    addEventHandler(MouseEvent.MOUSE_MOVED, e -> {
+      Logikos.getInstance().getFieldPaneController().onMouseMove(e, null);
+      e.consume();
+    });
+    
+    for (int i = 0; i < inputPorts.size(); i++) {
+      setupPortEventHandling(inputPorts.get(i), i, true);
+    }
+    for (int i = 0; i < outputPorts.size(); i++) {
+      setupPortEventHandling(outputPorts.get(i), i, false);
+    }
+  }
+  
+  private void setupPortEventHandling(Node port, int portNumber, boolean input) {
+    port.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+      Logikos.getInstance().getFieldPaneController().onClick(e, new MousePosition.PortOver(input, portNumber));
+      e.consume();
+    });
+    port.addEventHandler(MouseEvent.MOUSE_MOVED, e -> {
+      Logikos.getInstance().getFieldPaneController().onMouseMove(e, new MousePosition.PortOver(input, portNumber));
       e.consume();
     });
   }
@@ -111,7 +129,7 @@ public class UIComponent extends Group {
                               double squareSize, double squareCoord) {
     // The circles are a set distance PORT_SPACING apart and are centred on each side of the rectangle
     // TODO fill in these circles when connected
-    double x = left ? squareCoord : -squareCoord;
+    double x = left ? squareCoord : -squareCoord; // note: squareCoord is negative
     double startY = ((squareSize - ((numPorts - 1) * PORT_SPACING)) / 2) + squareCoord;
     for (int i = 0; i < numPorts; i++) {
       Circle port = new Circle(PORT_RADIUS);

@@ -32,12 +32,12 @@ public class PlaceComponentTool extends Tool {
   }
   
   @Override
-  public void onHover(double paneX, double paneY, UIComponent hoveredComponent) {
+  public void onHover(MousePosition position) {
     PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
     
     // Display the ghost
-    ghost.setLayoutX(fieldPane.paneToRealX(paneX));
-    ghost.setLayoutY(fieldPane.paneToRealY(paneY));
+    ghost.setLayoutX(fieldPane.paneToRealX(position.getPaneX()));
+    ghost.setLayoutY(fieldPane.paneToRealY(position.getPaneY()));
     ghost.setVisible(!doesGhostIntersectAnything());
     
     if (!fieldPane.getContentChildren().contains(ghost)) {
@@ -46,17 +46,17 @@ public class PlaceComponentTool extends Tool {
   }
   
   @Override
-  public void onClick(double paneX, double paneY, UIComponent clickedComponent) {
+  public void onClick(MousePosition position) {
     PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
     
     ghost.setVisible(false);
     
     // Don't place on another component
     // Note that the ghost's position is constantly set by onHover() so we don't need to do it here
-    if (clickedComponent != null || doesGhostIntersectAnything()) return;
+    if (position.getComponent() != null || doesGhostIntersectAnything()) return;
     
-    double realX = fieldPane.paneToRealX(paneX);
-    double realY = fieldPane.paneToRealY(paneY);
+    double realX = fieldPane.paneToRealX(position.getPaneX());
+    double realY = fieldPane.paneToRealY(position.getPaneY());
     
     FieldComponent newFC = new FieldComponent(componentSupplier.get(), new Position(realX, realY));
     Logikos.getInstance().getField().addFieldComponent(newFC);

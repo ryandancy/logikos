@@ -16,14 +16,14 @@ public class SelectTool extends Tool {
   }
   
   @Override
-  public void onClick(double paneX, double paneY, UIComponent clickedComponent) {
-    if (clickedComponent == selectedComponent) return;
+  public void onClick(MousePosition position) {
+    if (position.getComponent() == selectedComponent) return;
     
     deselectComponent();
     
-    if (clickedComponent == null) return;
+    if (position.getComponent() == null) return;
     
-    selectedComponent = clickedComponent;
+    selectedComponent = position.getComponent();
     selectedComponent.setSelected();
   }
   
