@@ -31,6 +31,14 @@ public class Connection {
     return output.getComponent().evaluate(listener)[output.getPortNumber()];
   }
   
+  /**
+   * Removes this {@link Connection} from both its input and output port. This object should then be garbage collected.
+   */
+  public void destruct() {
+    input.removeConnection();
+    output.getConnections().remove(this);
+  }
+  
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof Connection)) return false;

@@ -13,6 +13,7 @@ import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * A custom Group that is the graphical representation of a component. It has a {@link FieldComponent}.
@@ -40,8 +41,10 @@ public class UIComponent extends Group {
   
   private final FieldComponent fieldComponent;
   
-  private final List<Node> inputPorts = new ArrayList<>();
-  private final List<Node> outputPorts = new ArrayList<>();
+  private final Node[] inputPorts;
+  private final Node[] outputPorts;
+  private final UIConnection[] inputConnections;
+  private final List<UIConnection>[] outputConnectionLists;
   
   private Color fgColor;
   private Rectangle square;
@@ -51,6 +54,16 @@ public class UIComponent extends Group {
   
     // Ghost components are just graphical features
     setMouseTransparent(isGhost);
+    
+    int numInputs = fieldComponent.getLogicComponent().getNumInputs();
+    int numOutputs = fieldComponent.getLogicComponent().getNumOutputs();
+    inputPorts = new Node[numInputs];
+    outputPorts = new Node[numOutputs];
+    inputConnections = new UIConnection[numInputs];
+    //noinspection unchecked
+    outputConnectionLists = (List<UIConnection>[]) Stream.generate(ArrayList::new)
+        .limit(numOutputs)
+        .toArray(List[]::new);
     
     buildGraphics(displayName, isGhost);
     setupEventHandling();
@@ -67,11 +80,11 @@ public class UIComponent extends Group {
       e.consume();
     });
     
-    for (int i = 0; i < inputPorts.size(); i++) {
-      setupPortEventHandling(inputPorts.get(i), i, true);
+    for (int i = 0; i < inputPorts.length; i++) {
+      setupPortEventHandling(inputPorts[i], i, true);
     }
-    for (int i = 0; i < outputPorts.size(); i++) {
-      setupPortEventHandling(outputPorts.get(i), i, false);
+    for (int i = 0; i < outputPorts.length; i++) {
+      setupPortEventHandling(outputPorts[i], i, false);
     }
   }
   
@@ -101,10 +114,8 @@ public class UIComponent extends Group {
     name.setY(nameHeight);
     
     // Find the proper size for the square with the number of inputs/outputs and name
-    int numInputs = fieldComponent.getLogicComponent().getNumInputs();
-    int numOutputs = fieldComponent.getLogicComponent().getNumOutputs();
-    double inputPortSpace = minPortSpace(numInputs);
-    double outputPortSpace = minPortSpace(numOutputs);
+    double inputPortSpace = minPortSpace(inputPorts.length);
+    double outputPortSpace = minPortSpace(outputPorts.length);
     double nameSpace = nameWidth + 2 * MIN_NAME_PADDING;
     double squareSize = Math.max(Math.max(inputPortSpace, outputPortSpace), nameSpace);
     double squareCoord = -squareSize / 2; // the coord to centre it on (0, 0)
@@ -121,23 +132,23 @@ public class UIComponent extends Group {
     getChildren().add(name);
     
     // Add circles for each input/output port
-    addPortCircles(numInputs, true, inputPorts, fgColor, squareSize, squareCoord);
-    addPortCircles(numOutputs, false, outputPorts, fgColor, squareSize, squareCoord);
+    addPortCircles(true, inputPorts, fgColor, squareSize, squareCoord);
+    addPortCircles(false, outputPorts, fgColor, squareSize, squareCoord);
   }
   
-  private void addPortCircles(int numPorts, boolean left, List<Node> portList, Color fgColor,
+  private void addPortCircles(boolean left, Node[] portArr, Color fgColor,
                               double squareSize, double squareCoord) {
     // The circles are a set distance PORT_SPACING apart and are centred on each side of the rectangle
     // TODO fill in these circles when connected
     double x = left ? squareCoord : -squareCoord; // note: squareCoord is negative
-    double startY = ((squareSize - ((numPorts - 1) * PORT_SPACING)) / 2) + squareCoord;
-    for (int i = 0; i < numPorts; i++) {
+    double startY = ((squareSize - ((portArr.length - 1) * PORT_SPACING)) / 2) + squareCoord;
+    for (int i = 0; i < portArr.length; i++) {
       Circle port = new Circle(PORT_RADIUS);
       port.setStroke(fgColor);
       port.setFill(BACKGROUND_COLOR);
       port.setCenterX(x);
       port.setCenterY(startY + (i * PORT_SPACING));
-      portList.add(port);
+      portArr[i] = port;
       getChildren().add(port);
     }
   }
@@ -162,6 +173,34 @@ public class UIComponent extends Group {
   
   public FieldComponent getFieldComponent() {
     return fieldComponent;
+  }
+  
+  public Node[] getInputPorts() {
+    return inputPorts;
+  }
+  
+  public Node[] getOutputPorts() {
+    return outputPorts;
+  }
+  
+  public UIConnection[] getInputConnections() {
+    return inputConnections;
+  }
+  
+  public List<UIConnection>[] getOutputConnectionLists() {
+    return outputConnectionLists;
+  }
+  
+  public List<UIConnection> getOutputConnections(int outputPort) {
+    return outputConnectionLists[outputPort];
+  }
+  
+  public void setInputConnection(int inputPort, UIConnection connection) {
+    inputConnections[inputPort] = connection;
+  }
+  
+  public void addOutputConnection(int outputPort, UIConnection connection) {
+    outputConnectionLists[outputPort].add(connection);
   }
   
 }

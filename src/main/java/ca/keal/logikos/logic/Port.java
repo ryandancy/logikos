@@ -72,6 +72,10 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
       return connection;
     }
     
+    public void removeConnection() {
+      connection = null;
+    }
+    
     @Override
     public void connectTo(Output port) {
       // Remove the previous connection from the other port if it exists
