@@ -1,6 +1,5 @@
 package ca.keal.logikos.ui;
 
-import ca.keal.logikos.logic.LogicComponent;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
@@ -54,10 +53,8 @@ public class ConnectTool extends Tool {
     UIConnection oldInputConnection = input.getInputConnections()[inputPort];
     if (oldInputConnection != null) {
       // Remove the old connection at the input port, if it existed
-      LogicComponent oldLC = oldInputConnection.getFromComponent().getFieldComponent().getLogicComponent();
       oldInputConnection.destruct();
       fieldPane.getContentChildren().remove(oldInputConnection);
-      System.out.println("out (old): " + oldLC.getOutput(0).getConnections());
     }
     
     output.getFieldComponent().getLogicComponent().getOutput(outputPort)
