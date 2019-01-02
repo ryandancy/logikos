@@ -72,12 +72,11 @@ public class InputFC extends FieldComponent {
   }
   
   /**
-   * The type of {@link InputFC}. An {@link InputFC} is either a button or a switch.
+   * The type of {@link InputFC}. An {@link InputFC} is either a certain colour of button or a switch.
    */
-  // TODO graphics
   // Toggle behaviour will be defined in the UI layer
   public enum Type {
-    BUTTON, SWITCH
+    BUTTON_RED, BUTTON_BLUE, BUTTON_GREEN, BUTTON_YELLOW, SWITCH
   }
   
   @Override

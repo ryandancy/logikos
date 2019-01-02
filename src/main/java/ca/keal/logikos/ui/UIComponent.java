@@ -41,6 +41,8 @@ public class UIComponent extends Group implements Selectable {
   
   private final FieldComponent fieldComponent;
   
+  private final String displayName;
+  
   private final Node[] inputPorts;
   private final Node[] outputPorts;
   private final UIConnection[] inputConnections;
@@ -50,6 +52,7 @@ public class UIComponent extends Group implements Selectable {
   
   public UIComponent(FieldComponent fieldComponent, String displayName, boolean isGhost) {
     this.fieldComponent = fieldComponent;
+    this.displayName = displayName;
   
     // Ghost components are just graphical features
     setMouseTransparent(isGhost);
@@ -64,7 +67,7 @@ public class UIComponent extends Group implements Selectable {
         .limit(numOutputs)
         .toArray(List[]::new);
     
-    buildGraphics(displayName, isGhost);
+    buildGraphics(isGhost);
     setupEventHandling();
   }
   
@@ -98,7 +101,7 @@ public class UIComponent extends Group implements Selectable {
     });
   }
   
-  private void buildGraphics(String displayName, boolean isGhost) {
+  protected void buildGraphics(boolean isGhost) {
     // TODO custom graphics for non-UserGate FieldComponents
     
     Color fgColor = isGhost ? GHOST_COLOR : FOREGROUND_COLOR;
@@ -126,7 +129,7 @@ public class UIComponent extends Group implements Selectable {
     square.setStroke(fgColor);
     square.setFill(BACKGROUND_COLOR);
     
-    // Add the square and name here so that the input/output circles go on top of them
+    // Add the mainBody and name here so that the input/output circles go on top of them
     getChildren().add(square);
     getChildren().add(name);
     
@@ -135,8 +138,7 @@ public class UIComponent extends Group implements Selectable {
     addPortCircles(false, outputPorts, fgColor, squareSize, squareCoord);
   }
   
-  private void addPortCircles(boolean left, Node[] portArr, Color fgColor,
-                              double squareSize, double squareCoord) {
+  protected void addPortCircles(boolean left, Node[] portArr, Color fgColor, double squareSize, double squareCoord) {
     // The circles are a set distance PORT_SPACING apart and are centred on each side of the rectangle
     // TODO fill in these circles when connected
     double x = left ? squareCoord : -squareCoord; // note: squareCoord is negative
@@ -157,11 +159,18 @@ public class UIComponent extends Group implements Selectable {
   }
   
   /**
+   * @return The main body of the component to which a drop shadow should be added when selected.
+   */
+  protected Node getMainBody() {
+    return square;
+  }
+  
+  /**
    * Add a visual indication that this {@link UIComponent} is selected (currently a drop shadow).
    */
   @Override
   public void select() {
-    square.setEffect(SELECTED_DROP_SHADOW);
+    getMainBody().setEffect(SELECTED_DROP_SHADOW);
   }
   
   /**
@@ -169,7 +178,7 @@ public class UIComponent extends Group implements Selectable {
    */
   @Override
   public void deselect() {
-    square.setEffect(null);
+    getMainBody().setEffect(null);
   }
   
   /**

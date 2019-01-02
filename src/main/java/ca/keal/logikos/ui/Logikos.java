@@ -37,6 +37,7 @@ public class Logikos extends Application {
   public static final Tool[] ALL_TOOLS = {
       new SelectTool(),
       new ConnectTool(),
+      new PlaceInputTool(),
       new PlaceComponentTool("AND", "Add an AND gate", AndGate::new),
       new PlaceComponentTool("OR", "Add an OR gate", OrGate::new),
       new PlaceComponentTool("NOT", "Add a NOT gate", NotGate::new),

@@ -5,6 +5,8 @@ import ca.keal.logikos.field.Position;
 import ca.keal.logikos.logic.LogicComponent;
 import javafx.scene.Node;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -14,21 +16,36 @@ import java.util.function.Supplier;
  */
 public class PlaceComponentTool extends Tool {
   
-  private final Supplier<LogicComponent> componentSupplier;
+  /**
+   * Create a FieldComponent at a given Position.
+   */
+  private final Function<Position, FieldComponent> fcMaker;
+  
+  /**
+   * Create a UIComponent from a FieldComponent. The boolean argument is whether the UIComponent is a ghost.
+   */
+  private final BiFunction<FieldComponent, Boolean, UIComponent> uicMaker;
   
   /** This UIComponent is displayed when the user hovers over the FieldPane. */
   private final UIComponent ghost;
   
   public PlaceComponentTool(String name, String tooltip, Supplier<LogicComponent> componentSupplier) {
+    this(name, tooltip, position -> new FieldComponent(componentSupplier.get(), position),
+        (fc, isGhost) -> new UIComponent(fc, name, isGhost));
+  }
+  
+  protected PlaceComponentTool(String name, String tooltip, Function<Position, FieldComponent> fcMaker,
+                               BiFunction<FieldComponent, Boolean, UIComponent> uicMaker) {
     super(name, tooltip);
     
-    if (componentSupplier == null) {
-      throw new NullPointerException("Component supplier cannot be null!");
+    if (fcMaker == null || uicMaker == null) {
+      throw new NullPointerException("FieldComponent and UIComponent makers cannot be null!");
     }
-    this.componentSupplier = componentSupplier;
+    this.fcMaker = fcMaker;
+    this.uicMaker = uicMaker;
     
     // the position of the FieldComponent is null because it's a dummy FieldComponent to make the ghost work
-    ghost = new UIComponent(new FieldComponent(componentSupplier.get(), null), name, true);
+    ghost = uicMaker.apply(fcMaker.apply(null), true);
   }
   
   @Override
@@ -58,10 +75,10 @@ public class PlaceComponentTool extends Tool {
     double realX = fieldPane.paneToRealX(position.getPaneX());
     double realY = fieldPane.paneToRealY(position.getPaneY());
     
-    FieldComponent newFC = new FieldComponent(componentSupplier.get(), new Position(realX, realY));
+    FieldComponent newFC = fcMaker.apply(new Position(realX, realY));
     Logikos.getInstance().getField().addFieldComponent(newFC);
     
-    UIComponent newUIC = new UIComponent(newFC, getName(), false);
+    UIComponent newUIC = uicMaker.apply(newFC, false);
     newUIC.setLayoutX(realX);
     newUIC.setLayoutY(realY);
     fieldPane.getContentChildren().add(newUIC);
