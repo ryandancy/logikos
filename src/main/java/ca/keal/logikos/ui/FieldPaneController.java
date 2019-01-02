@@ -45,12 +45,14 @@ public class FieldPaneController {
   
   // Call the selected tool's click hook if click is true or its hover hook if click is false
   private void callSelectedToolMouseHook(MouseEvent e, MousePosition.PortOver portOver, boolean click) {
-    // Get the field component it's over
+    // Get the component or connection it's over
     UIComponent overComponent = null;
+    UIConnection overConnection = null;
     if (e.getSource() instanceof UIComponent) {
       overComponent = (UIComponent) e.getSource();
-    }
-    if (e.getSource() instanceof Node) {
+    } else if (e.getSource() instanceof UIConnection) {
+      overConnection = (UIConnection) e.getSource();
+    } else if (e.getSource() instanceof Node) {
       // Search for a parent UIComponent - what if the user clicked on a node?
       Node source = (Node) e.getSource();
       Parent current = source.getParent();
@@ -63,19 +65,41 @@ public class FieldPaneController {
       }
     }
     
+    MousePosition position = getMousePosition(e, overComponent, overConnection, portOver);
+    
+    // Call the hook
+    if (click) {
+      click(position);
+    } else {
+      hover(position);
+    }
+  }
+  
+  /**
+   * @return A {@link MousePosition} from the coordinates in the {@link MouseEvent} and the other parameters.
+   */
+  public MousePosition getMousePosition(MouseEvent e, UIComponent component, UIConnection connection,
+                                        MousePosition.PortOver portOver) {
     // Get the coordinates relative to the FieldPane
     Bounds fieldPaneBounds = fieldPane.localToScene(fieldPane.getBoundsInLocal());
     double relX = e.getSceneX() - fieldPaneBounds.getMinX();
     double relY = e.getSceneY() - fieldPaneBounds.getMinY();
     
-    MousePosition position = new MousePosition(relX, relY, overComponent, portOver);
-    
-    // Call the hook
-    if (click) {
-      Logikos.getInstance().getSelectedTool().onClick(position);
-    } else {
-      Logikos.getInstance().getSelectedTool().onHover(position);
-    }
+    return new MousePosition(relX, relY, component, connection, portOver);
+  }
+  
+  /**
+   * Call the click hook.
+   */
+  public void click(MousePosition position) {
+    Logikos.getInstance().getSelectedTool().onClick(position);
+  }
+  
+  /**
+   * Call the hover hook.
+   */
+  public void hover(MousePosition position) {
+    Logikos.getInstance().getSelectedTool().onHover(position);
   }
   
   public PannablePane getFieldPane() {

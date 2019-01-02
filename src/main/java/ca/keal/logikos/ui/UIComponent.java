@@ -22,9 +22,9 @@ import java.util.stream.Stream;
  * clicks.
  */
 // TODO resizing?
-public class UIComponent extends Group {
+public class UIComponent extends Group implements Selectable {
   
-  // TODO should these be moved to a separate class?
+  // TODO move these to a separate class
   public static final Color GHOST_COLOR = Color.gray(0.8);
   public static final Color FOREGROUND_COLOR = Color.BLACK;
   public static final Color BACKGROUND_COLOR = Color.WHITE;
@@ -35,7 +35,7 @@ public class UIComponent extends Group {
   private static final double MIN_NAME_PADDING = 12.0;
   private static final double PORT_RADIUS = 5.0;
   
-  private static final double SELECTED_DROP_SHADOW_RADIUS = 10.0;
+  private static final DropShadow SELECTED_DROP_SHADOW = new DropShadow(20.0, FOREGROUND_COLOR);
   
   private static final Font NAME_FONT = new Font("sans-serif", 15);
   
@@ -46,7 +46,6 @@ public class UIComponent extends Group {
   private final UIConnection[] inputConnections;
   private final List<UIConnection>[] outputConnectionLists;
   
-  private Color fgColor;
   private Rectangle square;
   
   public UIComponent(FieldComponent fieldComponent, String displayName, boolean isGhost) {
@@ -102,7 +101,7 @@ public class UIComponent extends Group {
   private void buildGraphics(String displayName, boolean isGhost) {
     // TODO custom graphics for non-UserGate FieldComponents
     
-    fgColor = isGhost ? GHOST_COLOR : FOREGROUND_COLOR;
+    Color fgColor = isGhost ? GHOST_COLOR : FOREGROUND_COLOR;
     
     // Construct the name
     Text name = new Text(displayName);
@@ -158,17 +157,44 @@ public class UIComponent extends Group {
   }
   
   /**
-   * Add a visual indication that this {@link UIComponent} is "selected" (currently a drop shadow).
+   * Add a visual indication that this {@link UIComponent} is selected (currently a drop shadow).
    */
-  public void setSelected() {
-    square.setEffect(new DropShadow(SELECTED_DROP_SHADOW_RADIUS, fgColor));
+  @Override
+  public void select() {
+    square.setEffect(SELECTED_DROP_SHADOW);
   }
   
   /**
-   * Remove the visual indication that this {@link UIComponent} is "selected" (currently a drop shadow).
+   * Remove the visual indication that this {@link UIComponent} is selected (currently a drop shadow).
    */
-  public void setDeselected() {
+  @Override
+  public void deselect() {
     square.setEffect(null);
+  }
+  
+  /**
+   * Delete this {@link UIComponent} from the UI and remove all references to it, allowing it to be garbage collected.
+   */
+  @Override
+  public void delete() {
+    Logikos.getInstance().getField().removeFieldComponent(fieldComponent);
+    Logikos.getInstance().getFieldPaneController().getFieldPane().getContentChildren().remove(this);
+    
+    // Delete all the connections connected to this
+    for (UIConnection inputConnection : inputConnections) {
+      if (inputConnection != null) {
+        inputConnection.delete();
+      }
+    }
+    for (List<UIConnection> outputConnectionList : outputConnectionLists) {
+      // Make a copy of the list because it's being modified as we loop through it
+      List<UIConnection> outputConnListCopy = new ArrayList<>(outputConnectionList);
+      for (UIConnection outputConnection : outputConnListCopy) {
+        if (outputConnection != null) {
+          outputConnection.delete();
+        }
+      }
+    }
   }
   
   public FieldComponent getFieldComponent() {

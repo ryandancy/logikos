@@ -10,11 +10,13 @@ public class MousePosition {
   private final double paneX;
   private final double paneY;
   private final UIComponent component;
+  private final UIConnection connection;
   private final PortOver portOver;
   
-  public MousePosition(double paneX, double paneY, UIComponent component, PortOver portOver) {
+  public MousePosition(double paneX, double paneY, UIComponent component, UIConnection connection, PortOver portOver) {
     this.paneX = paneX;
     this.paneY = paneY;
+    this.connection = connection;
     this.component = component;
     this.portOver = portOver;
   }
@@ -38,6 +40,13 @@ public class MousePosition {
    */
   public UIComponent getComponent() {
     return component;
+  }
+  
+  /**
+   * @return The {@link UIConnection} the mouse is over, or {@code null} if the mouse isn't over a connection.
+   */
+  public UIConnection getConnection() {
+    return connection;
   }
   
   /**

@@ -53,8 +53,7 @@ public class ConnectTool extends Tool {
     UIConnection oldInputConnection = input.getInputConnections()[inputPort];
     if (oldInputConnection != null) {
       // Remove the old connection at the input port, if it existed
-      oldInputConnection.destruct();
-      fieldPane.getContentChildren().remove(oldInputConnection);
+      oldInputConnection.delete();
     }
     
     output.getFieldComponent().getLogicComponent().getOutput(outputPort)
