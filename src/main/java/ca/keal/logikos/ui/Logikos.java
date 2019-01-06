@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -80,7 +81,11 @@ public class Logikos extends Application {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("RootLayout.fxml"));
       loader.setController(this);
       primaryStage.setScene(new Scene(loader.load()));
-      primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyPress); // handle key presses globally
+      
+      // Handle key presses + scrolling globally
+      primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyPress);
+      primaryStage.addEventFilter(ScrollEvent.ANY, this::onScroll);
+      
       primaryStage.requestFocus();
       primaryStage.show();
     } catch (IOException e) {
@@ -121,6 +126,11 @@ public class Logikos extends Application {
   // handle global key presses (just delegate to the selected tool)
   private void onKeyPress(KeyEvent e) {
     getSelectedTool().onKeyPress(e);
+  }
+  
+  // same, for scrolling
+  private void onScroll(ScrollEvent e) {
+    getSelectedTool().onScroll(e);
   }
   
 }

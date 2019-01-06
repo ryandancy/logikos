@@ -29,7 +29,7 @@ public class InputUIC extends UIComponent {
     img.setPreserveRatio(true);
     img.setFitWidth(FIT_WIDTH);
     if (isGhost) {
-      img.setEffect(new ColorAdjust(0, -1, 0, 0)); // desaturate, turn greyscale
+      img.setEffect(new ColorAdjust(0, -0.7, 0, 0)); // desaturate, turn mostly greyscale
       img.setOpacity(0.75);
     }
     

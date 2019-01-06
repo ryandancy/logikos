@@ -19,15 +19,15 @@ public class PlaceComponentTool extends Tool {
   /**
    * Create a FieldComponent at a given Position.
    */
-  private final Function<Position, FieldComponent> fcMaker;
+  private Function<Position, FieldComponent> fcMaker;
   
   /**
    * Create a UIComponent from a FieldComponent. The boolean argument is whether the UIComponent is a ghost.
    */
-  private final BiFunction<FieldComponent, Boolean, UIComponent> uicMaker;
+  private BiFunction<FieldComponent, Boolean, UIComponent> uicMaker;
   
   /** This UIComponent is displayed when the user hovers over the FieldPane. */
-  private final UIComponent ghost;
+  private UIComponent ghost;
   
   public PlaceComponentTool(String name, String tooltip, Supplier<LogicComponent> componentSupplier) {
     this(name, tooltip, position -> new FieldComponent(componentSupplier.get(), position),
@@ -44,8 +44,7 @@ public class PlaceComponentTool extends Tool {
     this.fcMaker = fcMaker;
     this.uicMaker = uicMaker;
     
-    // the position of the FieldComponent is null because it's a dummy FieldComponent to make the ghost work
-    ghost = uicMaker.apply(fcMaker.apply(null), true);
+    makeGhost();
   }
   
   @Override
@@ -110,6 +109,39 @@ public class PlaceComponentTool extends Tool {
   private void removeGhost() {
     // holy method chaining, batman!
     Logikos.getInstance().getFieldPaneController().getFieldPane().getContentChildren().remove(ghost);
+  }
+  
+  protected void setFieldComponentMaker(Function<Position, FieldComponent> fcMaker) {
+    this.fcMaker = fcMaker;
+  }
+  
+  protected void setUIComponentMaker(BiFunction<FieldComponent, Boolean, UIComponent> uicMaker) {
+    this.uicMaker = uicMaker;
+  }
+  
+  protected void makeGhost() {
+    // delete the old ghost if it exists + save its information
+    boolean oldGhostExists = ghost != null;
+    double ghostX = -1;
+    double ghostY = -1;
+    boolean ghostVisible = false;
+    if (oldGhostExists) {
+      ghostX = ghost.getLayoutX();
+      ghostY = ghost.getLayoutY();
+      ghostVisible = ghost.isVisible();
+      removeGhost();
+    }
+    
+    // the position of the FieldComponent is null because it's a dummy FieldComponent to make the ghost work
+    ghost = uicMaker.apply(fcMaker.apply(null), true);
+    
+    // reset at the old ghost's position
+    if (oldGhostExists) {
+      ghost.setLayoutX(ghostX);
+      ghost.setLayoutY(ghostY);
+      ghost.setVisible(ghostVisible);
+      Logikos.getInstance().getFieldPaneController().getFieldPane().getContentChildren().add(ghost);
+    }
   }
   
 }

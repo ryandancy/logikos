@@ -1,6 +1,7 @@
 package ca.keal.logikos.ui;
 
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.ScrollEvent;
 
 /**
  * Represents a tool, which appears in the ToolPane and can be clicked on by the user and used to interact with the
@@ -68,6 +69,12 @@ public abstract class Tool {
    * @param e The {@link KeyEvent} that triggered this call.
    */
   public void onKeyPress(KeyEvent e) {}
+  
+  /**
+   * Called when the user scrolls.
+   * @param e The {@link ScrollEvent} that triggered this call.
+   */
+  public void onScroll(ScrollEvent e) {}
   
   /**
    * Called when the mouse leaves the FieldPane.
