@@ -1,7 +1,9 @@
 package ca.keal.logikos.ui;
 
 import ca.keal.logikos.field.Field;
+import ca.keal.logikos.field.InputFC;
 import ca.keal.logikos.logic.AndGate;
+import ca.keal.logikos.logic.Input;
 import ca.keal.logikos.logic.NandGate;
 import ca.keal.logikos.logic.NotGate;
 import ca.keal.logikos.logic.OrGate;
@@ -34,11 +36,13 @@ public class Logikos extends Application {
   }
   
   // TODO more tools
-  // TODO specialized PlaceComponentTool subclasses for placing Inputs/Outputs
   public static final Tool[] ALL_TOOLS = {
       new SelectTool(),
       new ConnectTool(),
-      new PlaceInputTool(),
+      new PlaceTypedComponentTool<>("Input", "Add an input",
+          type -> position -> new InputFC(new Input(), position, type),
+          (fc, isGhost) -> new InputUIC((InputFC) fc, isGhost),
+          InputFC.Type.SWITCH, InputFC.Type.values()),
       new PlaceComponentTool("AND", "Add an AND gate", AndGate::new),
       new PlaceComponentTool("OR", "Add an OR gate", OrGate::new),
       new PlaceComponentTool("NOT", "Add a NOT gate", NotGate::new),
