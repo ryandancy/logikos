@@ -22,6 +22,7 @@ import java.util.stream.Stream;
  * clicks.
  */
 // TODO resizing?
+// TODO make this more of a superclass and move the displayName stuff to a subclass
 public class UIComponent extends Group implements Selectable {
   
   // TODO move these to a separate class
