@@ -23,6 +23,10 @@ public class OutputFC extends FieldComponent {
     this.type = type;
   }
   
+  public Type getType() {
+    return type;
+  }
+  
   /**
    * Evaluate the underlying {@link Output} using the given {@link EvaluationListener}. This is package-private as it
    * should only ever be called by {@link Field}; the UI layer has no need of it.

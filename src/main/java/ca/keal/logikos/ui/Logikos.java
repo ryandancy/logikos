@@ -2,11 +2,13 @@ package ca.keal.logikos.ui;
 
 import ca.keal.logikos.field.Field;
 import ca.keal.logikos.field.InputFC;
+import ca.keal.logikos.field.OutputFC;
 import ca.keal.logikos.logic.AndGate;
 import ca.keal.logikos.logic.Input;
 import ca.keal.logikos.logic.NandGate;
 import ca.keal.logikos.logic.NotGate;
 import ca.keal.logikos.logic.OrGate;
+import ca.keal.logikos.logic.Output;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -43,6 +45,10 @@ public class Logikos extends Application {
           type -> position -> new InputFC(new Input(), position, type),
           (fc, isGhost) -> new InputUIC((InputFC) fc, isGhost),
           InputFC.Type.SWITCH, InputFC.Type.values()),
+      new PlaceTypedComponentTool<>("Output", "Add an output",
+          type -> position -> new OutputFC(new Output(), position, type),
+          (fc, isGhost) -> new OutputUIC((OutputFC) fc, isGhost),
+          OutputFC.Type.LAMP, OutputFC.Type.values()),
       new PlaceComponentTool("AND", "Add an AND gate", AndGate::new),
       new PlaceComponentTool("OR", "Add an OR gate", OrGate::new),
       new PlaceComponentTool("NOT", "Add a NOT gate", NotGate::new),

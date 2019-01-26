@@ -26,7 +26,7 @@ public class InputUIC extends BooleanStateImageUIC {
       case SWITCH:
         return "switch";
       default:
-        throw new IllegalArgumentException("Unknown input type");
+        throw new IllegalStateException("Unknown input type");
     }
   }
   
