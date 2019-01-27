@@ -43,6 +43,7 @@ public class ConnectTool extends Tool {
       Bounds portBounds = fieldPane.sceneToLocal(port.localToScene(port.getLayoutBounds()));
       ghost.setLayoutX(fieldPane.paneToRealX(portBounds.getMinX()) + (portBounds.getWidth() / 2));
       ghost.setLayoutY(fieldPane.paneToRealY(portBounds.getMinY()) + (portBounds.getHeight() / 2));
+      updateGhostToCoords(position);
       ghost.setVisible(true);
       fieldPane.getContentChildren().add(ghost);
       ghost.toFront();
@@ -127,7 +128,10 @@ public class ConnectTool extends Tool {
   @Override
   public void onHover(MousePosition position) {
     if (!ghost.isVisible()) return;
-    
+    updateGhostToCoords(position);
+  }
+  
+  private void updateGhostToCoords(MousePosition position) {
     // Update the 'to' center coordinates of the ghost to make it 'stretch' with the mouse
     ghost.setToCenter(position.getPaneX(), position.getPaneY());
   }
