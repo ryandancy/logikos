@@ -1,6 +1,7 @@
 package ca.keal.logikos.ui;
 
 import ca.keal.logikos.field.Field;
+import ca.keal.logikos.field.InputFC;
 import javafx.scene.Node;
 
 // TODO: changing input states, showing connection values (green/red), validation of the field before evaluation
@@ -8,6 +9,22 @@ public class RunTool extends Tool {
   
   public RunTool() {
     super("Run", "Run the chip", Location.EVALUATION_BOX, true);
+  }
+  
+  @Override
+  public void onClick(MousePosition position) {
+    // Toggle toggleable InputUICs
+    if (!(position.getComponent() instanceof InputUIC)) return;
+    
+    InputUIC inputUIC = (InputUIC) position.getComponent();
+    InputFC inputFC = (InputFC) inputUIC.getFieldComponent();
+    if (inputFC.getType().getBehaviour() != InputFC.Type.Behaviour.TOGGLE) return;
+    
+    boolean newValue = !inputFC.getValue();
+    inputFC.getLogicComponent().setValue(newValue);
+    inputUIC.setState(newValue);
+    
+    evaluate();
   }
   
   @Override
@@ -29,6 +46,9 @@ public class RunTool extends Tool {
     for (Node node : Logikos.getInstance().getFieldPaneController().getFieldPane().getContentChildren()) {
       if (node instanceof BooleanStateImageUIC) {
         ((BooleanStateImageUIC) node).setState(false);
+        if (node instanceof InputUIC) {
+          ((InputFC) ((InputUIC) node).getFieldComponent()).getLogicComponent().setValue(false);
+        }
       }
     }
   }

@@ -72,11 +72,30 @@ public class InputFC extends FieldComponent {
   }
   
   /**
-   * The type of {@link InputFC}. An {@link InputFC} is either a certain colour of button or a switch.
+   * The type of {@link InputFC}. An {@link InputFC} is either a certain colour of button or a switch. Each type may
+   * be either a "press" or "toggle" type, which define the behaviour of the type.
    */
-  // Toggle behaviour will be defined in the UI layer
   public enum Type {
-    BUTTON_RED, BUTTON_BLUE, BUTTON_GREEN, BUTTON_YELLOW, SWITCH, BINARY
+    BUTTON_RED(Behaviour.PRESS),
+    BUTTON_BLUE(Behaviour.PRESS),
+    BUTTON_GREEN(Behaviour.PRESS),
+    BUTTON_YELLOW(Behaviour.PRESS),
+    SWITCH(Behaviour.TOGGLE),
+    BINARY(Behaviour.TOGGLE);
+    
+    private Behaviour behaviour;
+    
+    Type(Behaviour behaviour) {
+      this.behaviour = behaviour;
+    }
+    
+    public Behaviour getBehaviour() {
+      return behaviour;
+    }
+    
+    public enum Behaviour {
+      PRESS, TOGGLE
+    }
   }
   
   @Override
