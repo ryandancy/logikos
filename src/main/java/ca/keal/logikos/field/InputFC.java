@@ -76,7 +76,7 @@ public class InputFC extends FieldComponent {
    */
   // Toggle behaviour will be defined in the UI layer
   public enum Type {
-    BUTTON_RED, BUTTON_BLUE, BUTTON_GREEN, BUTTON_YELLOW, SWITCH
+    BUTTON_RED, BUTTON_BLUE, BUTTON_GREEN, BUTTON_YELLOW, SWITCH, BINARY
   }
   
   @Override

@@ -25,6 +25,8 @@ public class InputUIC extends BooleanStateImageUIC {
         return "button-yellow";
       case SWITCH:
         return "switch";
+      case BINARY:
+        return "binary";
       default:
         throw new IllegalStateException("Unknown input type");
     }
