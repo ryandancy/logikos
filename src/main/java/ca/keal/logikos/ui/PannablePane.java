@@ -42,8 +42,8 @@ public class PannablePane extends Pane {
       if (!e.isSecondaryButtonDown()) return; // right mouse button pans
       panAnchorX = e.getSceneX();
       panAnchorY = e.getSceneY();
-      translateAnchorX = content.getTranslateX();
-      translateAnchorY = content.getTranslateY();
+      translateAnchorX = getOffsetX();
+      translateAnchorY = getOffsetY();
     });
     addEventHandler(MouseEvent.MOUSE_DRAGGED, e -> {
       if (!e.isSecondaryButtonDown()) return; // right mouse button pans
@@ -86,7 +86,7 @@ public class PannablePane extends Pane {
     Point2D paneOrigin = localToScene(0, 0);
     Bounds contentBounds = content.localToScene(content.getBoundsInLocal());
     
-    double translateX = content.getTranslateX();
+    double translateX = getOffsetX();
     double negativeX = contentBounds.getMinX() - paneOrigin.getX();
     if (negativeX < 0) {
       // compensate for strange translation when there's anything offscreen
@@ -106,7 +106,7 @@ public class PannablePane extends Pane {
     Point2D paneOrigin = localToScene(0, 0);
     Bounds contentBounds = content.localToScene(content.getBoundsInLocal());
     
-    double translateY = content.getTranslateY();
+    double translateY = getOffsetY();
     double negativeY = contentBounds.getMinY() - paneOrigin.getY();
     if (negativeY < 0) {
       // compensate for strange translation when there's anything offscreen
@@ -114,6 +114,20 @@ public class PannablePane extends Pane {
     } else {
       return paneY - translateY;
     }
+  }
+  
+  /**
+   * @return The x-offset of the content of this Pane from panning.
+   */
+  public double getOffsetX() {
+    return content.getTranslateX();
+  }
+  
+  /**
+   * @return The y-offset of the content of this Pane from panning.
+   */
+  public double getOffsetY() {
+    return content.getTranslateY();
   }
   
 }

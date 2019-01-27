@@ -7,7 +7,6 @@ import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
 
-// TODO there are all kinds of bugs when moving the pane around and connecting things
 public class ConnectTool extends Tool {
   
   private UIComponent storedComponent = null; // if null: no output port selected
@@ -41,9 +40,11 @@ public class ConnectTool extends Tool {
       Node port = (isInputStored ? storedComponent.getInputPorts()
           : storedComponent.getOutputPorts())[storedPortNumber];
       Bounds portBounds = fieldPane.sceneToLocal(port.localToScene(port.getLayoutBounds()));
-      ghost.setLayoutX(fieldPane.paneToRealX(portBounds.getMinX()) + (portBounds.getWidth() / 2));
-      ghost.setLayoutY(fieldPane.paneToRealY(portBounds.getMinY()) + (portBounds.getHeight() / 2));
-      updateGhostToCoords(position);
+      ghost.setLayoutX(fieldPane.paneToRealX(portBounds.getMinX() + Math.max(0, -fieldPane.getOffsetX()))
+          + (portBounds.getWidth() / 2));
+      ghost.setLayoutY(fieldPane.paneToRealY(portBounds.getMinY() + Math.max(0, -fieldPane.getOffsetY()))
+          + (portBounds.getHeight() / 2));
+      ghost.setToCenterRelativeCoords(0, 0);
       ghost.setVisible(true);
       fieldPane.getContentChildren().add(ghost);
       ghost.toFront();
@@ -86,8 +87,10 @@ public class ConnectTool extends Tool {
     // Get the coordinates of the center of the output node for placing the connection
     Node outputNode = output.getOutputPorts()[outputPort];
     Bounds outputBounds = fieldPane.sceneToLocal(outputNode.localToScene(outputNode.getBoundsInLocal()));
-    double outputCenterX = fieldPane.paneToRealX(outputBounds.getMinX()) + (outputBounds.getWidth() / 2);
-    double outputCenterY = fieldPane.paneToRealY(outputBounds.getMinY()) + (outputBounds.getHeight() / 2);
+    double outputCenterX = fieldPane.paneToRealX(outputBounds.getMinX() + Math.max(0, -fieldPane.getOffsetX()))
+        + (outputBounds.getWidth() / 2);
+    double outputCenterY = fieldPane.paneToRealY(outputBounds.getMinY() + Math.max(0, -fieldPane.getOffsetY()))
+        + (outputBounds.getHeight() / 2);
     
     UIConnection connection = new UIConnection(output, outputPort, input, inputPort);
     output.getOutputConnections(outputPort).add(connection);
@@ -146,7 +149,9 @@ public class ConnectTool extends Tool {
   
   private void updateGhostToCoords(MousePosition position) {
     // Update the 'to' center coordinates of the ghost to make it 'stretch' with the mouse
-    ghost.setToCenter(position.getPaneX(), position.getPaneY());
+    PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
+    ghost.setToCenter(position.getPaneX() - Math.max(0, -fieldPane.getOffsetX()),
+        position.getPaneY() - Math.max(0, -fieldPane.getOffsetY()));
   }
   
   private void clearStoredPortData() {

@@ -194,13 +194,14 @@ public class UIConnection extends Group implements Selectable {
     return toCenterYProperty.get();
   }
   
-  private void setToCenterRelativeCoords(double toCenterX, double toCenterY) {
+  public void setToCenterRelativeCoords(double toCenterX, double toCenterY) {
     toCenterXProperty.set(toCenterX);
     toCenterYProperty.set(toCenterY);
   }
   
   public void setToCenter(double paneX, double paneY) {
-    Point2D relCoord = parentToLocal(paneX, paneY);
+    PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
+    Point2D relCoord = start.sceneToLocal(fieldPane.localToScene(paneX, paneY));
     setToCenterRelativeCoords(relCoord.getX(), relCoord.getY());
   }
   
