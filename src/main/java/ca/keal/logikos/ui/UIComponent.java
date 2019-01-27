@@ -25,18 +25,13 @@ import java.util.stream.Stream;
 // TODO make this more of a superclass and move the displayName stuff to a subclass
 public class UIComponent extends Group implements Selectable {
   
-  // TODO move these to a separate class
-  public static final Color GHOST_COLOR = Color.gray(0.8);
-  public static final Color FOREGROUND_COLOR = Color.BLACK;
-  public static final Color BACKGROUND_COLOR = Color.WHITE;
-  
   // Constants for drawing the component
   private static final double PORT_SPACING = 20.0;
   private static final double MIN_PORT_PADDING = 6.0;
   private static final double MIN_NAME_PADDING = 12.0;
   private static final double PORT_RADIUS = 5.0;
   
-  private static final DropShadow SELECTED_DROP_SHADOW = new DropShadow(20.0, FOREGROUND_COLOR);
+  private static final DropShadow SELECTED_DROP_SHADOW = new DropShadow(20.0, UIColours.FOREGROUND_COLOR);
   
   private static final Font NAME_FONT = new Font("sans-serif", 15);
   
@@ -105,7 +100,7 @@ public class UIComponent extends Group implements Selectable {
   protected void buildGraphics(boolean isGhost) {
     // TODO custom graphics for non-UserGate FieldComponents
     
-    Color fgColor = isGhost ? GHOST_COLOR : FOREGROUND_COLOR;
+    Color fgColor = isGhost ? UIColours.GHOST_COLOR : UIColours.FOREGROUND_COLOR;
     
     // Construct the name
     Text name = new Text(displayName);
@@ -128,7 +123,7 @@ public class UIComponent extends Group implements Selectable {
     square.setX(squareCoord);
     square.setY(squareCoord);
     square.setStroke(fgColor);
-    square.setFill(BACKGROUND_COLOR);
+    square.setFill(UIColours.BACKGROUND_COLOR);
     
     // Add the mainBody and name here so that the input/output circles go on top of them
     getChildren().add(square);
@@ -147,7 +142,7 @@ public class UIComponent extends Group implements Selectable {
     for (int i = 0; i < portArr.length; i++) {
       Circle port = new Circle(PORT_RADIUS);
       port.setStroke(fgColor);
-      port.setFill(BACKGROUND_COLOR);
+      port.setFill(UIColours.BACKGROUND_COLOR);
       port.setCenterX(x);
       port.setCenterY(startY + (i * PORT_SPACING));
       portArr[i] = port;

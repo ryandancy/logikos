@@ -5,7 +5,7 @@ import ca.keal.logikos.field.InputFC;
 /**
  * A {@link UIComponent} representing an input specifically.
  */
-// TODO selecting type, toggling
+// TODO selecting type, toggling, key bindings
 public class InputUIC extends BooleanStateImageUIC {
   
   public InputUIC(InputFC inputFC, boolean isGhost) {

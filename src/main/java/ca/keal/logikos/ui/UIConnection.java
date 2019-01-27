@@ -22,7 +22,7 @@ public class UIConnection extends Group implements Selectable {
   private static final double START_END_RADIUS = 3.0;
   
   private static final DropShadow SELECTED_DROP_SHADOW = new DropShadow(
-      BlurType.THREE_PASS_BOX, UIComponent.FOREGROUND_COLOR, 25.0, 0.75, 0, 0);
+      BlurType.THREE_PASS_BOX, UIColours.FOREGROUND_COLOR, 25.0, 0.75, 0, 0);
   
   private final UIComponent fromComponent;
   private final int fromOutputPort;
@@ -54,11 +54,11 @@ public class UIConnection extends Group implements Selectable {
     double toCenterY = center(toPortBounds.getMinY(), toPortBounds.getHeight())
         - center(fromPortBIP.getMinY(), fromPortBIP.getHeight());
     
-    start = new Circle(0, 0, START_END_RADIUS, UIComponent.FOREGROUND_COLOR);
-    end = new Circle(toCenterX, toCenterY, START_END_RADIUS, UIComponent.FOREGROUND_COLOR);
+    start = new Circle(0, 0, START_END_RADIUS, UIColours.FOREGROUND_COLOR);
+    end = new Circle(toCenterX, toCenterY, START_END_RADIUS, UIColours.FOREGROUND_COLOR);
   
     wire = new Line(0, 0, toCenterX, toCenterY);
-    wire.setFill(UIComponent.FOREGROUND_COLOR);
+    wire.setFill(UIColours.FOREGROUND_COLOR);
     wire.setStrokeWidth(LINE_WIDTH);
     
     // transparent on top to catch the mouse events
