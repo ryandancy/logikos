@@ -1,5 +1,10 @@
 package ca.keal.logikos.ui;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 
@@ -15,17 +20,29 @@ import javafx.scene.input.ScrollEvent;
  * #onClick(MousePosition)} is called. When their mouse leaves the pane, {@link #onLeavePane()} is called. When the user
  * presses a key with this tool selected, {@link #onKeyPress(KeyEvent)} is called.
  * 
- * Tools also have a name and a tooltip.
+ * Tools have a name and a tooltip. They also have a {@link Location} value, which describes the location in which the
+ * {@link Tool} should be displayed: the ToolPane or the evaluation box on the top-right of the FieldPane.
  */
 public abstract class Tool {
   
+  private static final ToggleGroup GLOBAL_TOGGLE_GROUP = new ToggleGroup();
+  
   private final String name;
   private final String tooltip;
+  private final Location location;
+  
+  private BooleanProperty enabledProperty = new SimpleBooleanProperty();
   
   // TODO i18n, images
-  public Tool(String name, String tooltip) {
+  public Tool(String name, String tooltip, Location location, boolean enabled) {
     this.name = name;
     this.tooltip = tooltip;
+    this.location = location;
+    enabledProperty.set(enabled);
+  }
+  
+  public Tool(String name, String tooltip) {
+    this(name, tooltip, Location.TOOL_PANE, true);
   }
   
   /**
@@ -40,6 +57,62 @@ public abstract class Tool {
    */
   public String getTooltip() {
     return tooltip;
+  }
+  
+  /**
+   * @return The {@link Location} of the tool.
+   */
+  public Location getLocation() {
+    return location;
+  }
+  
+  /**
+   * @return Whether the tool is enabled.
+   */
+  public boolean isEnabled() {
+    return enabledProperty.get();
+  }
+  
+  /**
+   * Set the tool enabled or disabled.
+   */
+  public void setEnabled(boolean enabled) {
+    enabledProperty.set(enabled);
+  }
+  
+  /**
+   * @return The property of whether or not this tool is enabled.
+   */
+  public BooleanProperty enabledProperty() {
+    return enabledProperty;
+  }
+  
+  /**
+   * @return A {@link RadioButton} generated based on this {@link Tool}.
+   */
+  public RadioButton createRadioButton() {
+    // TODO images
+    RadioButton btn = new RadioButton(getName());
+    btn.setTooltip(new Tooltip(getTooltip()));
+    btn.setUserData(this);
+    btn.setToggleGroup(GLOBAL_TOGGLE_GROUP);
+    btn.disableProperty().bind(enabledProperty().not());
+    
+    if (this == Logikos.ALL_TOOLS[0]) {
+      // Make the first tool selected for real (i.e. with a dot in the radio button)
+      btn.fire();
+    }
+    
+    btn.selectedProperty().addListener((observableValue, previouslySelected, nowSelected) -> {
+      if (nowSelected) {
+        onSelect();
+        Logikos.getInstance().setSelectedTool(this);
+      } else if (previouslySelected) {
+        onDeselect();
+      }
+    });
+    
+    return btn;
   }
   
   /**
@@ -80,5 +153,12 @@ public abstract class Tool {
    * Called when the mouse leaves the FieldPane.
    */
   public void onLeavePane() {}
+  
+  /**
+   * Where should the Tool be located: in the ToolPane or in the evaluation box on the top-right of the FieldPane?
+   */
+  public enum Location {
+    TOOL_PANE, EVALUATION_BOX
+  }
   
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+
+<!-- TODO move the style attribute here to a real CSS file -->
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:id="evaluationBox"
+      fx:controller="ca.keal.logikos.ui.EvaluationBoxController"
+      style="-fx-background-color: #AAA; -fx-stroke: #111"
+      maxHeight="20.0" maxWidth="300.0" />

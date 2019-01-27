@@ -52,12 +52,16 @@ public class Logikos extends Application {
       new PlaceComponentTool("AND", "Add an AND gate", AndGate::new),
       new PlaceComponentTool("OR", "Add an OR gate", OrGate::new),
       new PlaceComponentTool("NOT", "Add a NOT gate", NotGate::new),
-      new PlaceComponentTool("NAND", "Add a NAND gate", NandGate::new)
+      new PlaceComponentTool("NAND", "Add a NAND gate", NandGate::new),
+      
+      // these go in the evaluation box
+      new StartEvaluateTool()
   };
   
   // These are loaded after this class is set as the controller for the RootLayout
   @FXML @SuppressWarnings("unused") private ToolPaneController toolPaneController;
   @FXML @SuppressWarnings("unused") private FieldPaneController fieldPaneController;
+  @FXML @SuppressWarnings("unused") private EvaluationBoxController evaluationBoxController;
   
   private Stage primaryStage;
   
@@ -131,6 +135,10 @@ public class Logikos extends Application {
   
   public ToolPaneController getToolPaneController() {
     return toolPaneController;
+  }
+  
+  public EvaluationBoxController getEvaluationBoxController() {
+    return evaluationBoxController;
   }
   
   // handle global key presses (just delegate to the selected tool)

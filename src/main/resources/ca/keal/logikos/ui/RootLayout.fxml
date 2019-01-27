@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.StackPane?>
 
 <SplitPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
@@ -9,6 +10,9 @@
   
   <fx:include fx:id="toolPane" source="ToolPane.fxml" />
   
-  <fx:include fx:id="fieldPane" source="FieldPane.fxml" />
+  <StackPane>
+    <fx:include fx:id="fieldPane" source="FieldPane.fxml" />
+    <fx:include fx:id="evaluationBox" source="EvaluationBox.fxml" StackPane.alignment="TOP_RIGHT" />
+  </StackPane>
   
 </SplitPane>
