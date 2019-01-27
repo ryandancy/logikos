@@ -25,7 +25,7 @@ public class UIConnection extends Group implements Selectable {
   private static final double START_END_RADIUS = 3.0;
   
   private static final DropShadow SELECTED_DROP_SHADOW = new DropShadow(
-      BlurType.THREE_PASS_BOX, UIColours.FOREGROUND_COLOR, 25.0, 0.75, 0, 0);
+      BlurType.THREE_PASS_BOX, UIColors.FOREGROUND_COLOR, 25.0, 0.75, 0, 0);
   
   private final UIComponent fromComponent;
   private final int fromOutputPort;
@@ -97,10 +97,10 @@ public class UIConnection extends Group implements Selectable {
   }
   
   private void buildGraphics() {
-    start = new Circle(0, 0, START_END_RADIUS, isGhost ? UIColours.GHOST_COLOR : UIColours.FOREGROUND_COLOR);
+    start = new Circle(0, 0, START_END_RADIUS, isGhost ? UIColors.GHOST_COLOR : UIColors.FOREGROUND_COLOR);
     start.setMouseTransparent(isGhost);
     
-    end = new Circle(START_END_RADIUS, isGhost ? UIColours.GHOST_COLOR : UIColours.FOREGROUND_COLOR);
+    end = new Circle(START_END_RADIUS, isGhost ? UIColors.GHOST_COLOR : UIColors.FOREGROUND_COLOR);
     end.centerXProperty().bind(toCenterXProperty);
     end.centerYProperty().bind(toCenterYProperty);
     end.setMouseTransparent(isGhost);
@@ -110,7 +110,7 @@ public class UIConnection extends Group implements Selectable {
     wire.setStartY(0);
     wire.endXProperty().bind(toCenterXProperty);
     wire.endYProperty().bind(toCenterYProperty);
-    wire.setStroke(isGhost ? UIColours.GHOST_COLOR : UIColours.FOREGROUND_COLOR);
+    wire.setStroke(isGhost ? UIColors.GHOST_COLOR : UIColors.FOREGROUND_COLOR);
     wire.setStrokeWidth(LINE_WIDTH);
     wire.setMouseTransparent(isGhost);
     

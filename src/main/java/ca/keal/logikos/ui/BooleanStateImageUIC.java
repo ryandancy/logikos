@@ -40,7 +40,7 @@ public abstract class BooleanStateImageUIC extends UIComponent {
   
     getChildren().add(img);
   
-    Color portColor = isGhost ? UIColours.GHOST_COLOR : UIColours.FOREGROUND_COLOR;
+    Color portColor = isGhost ? UIColors.GHOST_COLOR : UIColors.FOREGROUND_COLOR;
     addPortCircles(true, getInputPorts(), portColor, bounds.getWidth(), xCoord);
     addPortCircles(false, getOutputPorts(), portColor, bounds.getWidth(), xCoord);
   }
