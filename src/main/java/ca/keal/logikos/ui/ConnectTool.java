@@ -114,7 +114,7 @@ public class ConnectTool extends Tool {
     toCheck.add(initial);
     while (!toCheck.isEmpty()) {
       UIComponent current = toCheck.remove();
-      if (current == lookingFor) return false;
+      if (current == lookingFor) return false; // TODO update some form of status bar
       for (List<UIConnection> outputConnections : current.getOutputConnectionLists()) {
         for (UIConnection outputConnection : outputConnections) {
           toCheck.add(outputConnection.getToComponent());
@@ -127,8 +127,21 @@ public class ConnectTool extends Tool {
   
   @Override
   public void onHover(MousePosition position) {
-    if (!ghost.isVisible()) return;
+    if (storedComponent == null) return;
+    
+    PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
     updateGhostToCoords(position);
+    
+    if (!fieldPane.getContentChildren().contains(ghost)) {
+      fieldPane.getContentChildren().add(ghost);
+      ghost.setVisible(true);
+    }
+  }
+  
+  @Override
+  public void onLeavePane() {
+    super.onLeavePane();
+    removeGhost();
   }
   
   private void updateGhostToCoords(MousePosition position) {
@@ -139,8 +152,10 @@ public class ConnectTool extends Tool {
   private void clearStoredPortData() {
     storedComponent = null;
     storedPortNumber = -1;
-    
-    // Clear the ghost
+    removeGhost();
+  }
+  
+  private void removeGhost() {
     ghost.setVisible(false);
     Logikos.getInstance().getFieldPaneController().getFieldPane().getContentChildren().remove(ghost);
   }
