@@ -2,7 +2,7 @@ package ca.keal.logikos.ui;
 
 import ca.keal.logikos.field.OutputFC;
 
-// TODO selecting type, setting on/off
+// TODO selecting type
 public class OutputUIC extends BooleanStateImageUIC {
   
   protected OutputUIC(OutputFC outputFC, boolean isGhost) {

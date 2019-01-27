@@ -55,7 +55,7 @@ public class Logikos extends Application {
       new PlaceComponentTool("NAND", "Add a NAND gate", NandGate::new),
       
       // these go in the evaluation box
-      new StartEvaluateTool()
+      new RunTool()
   };
   
   // These are loaded after this class is set as the controller for the RootLayout

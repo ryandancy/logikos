@@ -4,6 +4,7 @@ import ca.keal.logikos.field.FieldComponent;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
@@ -23,7 +24,7 @@ public abstract class BooleanStateImageUIC extends UIComponent {
   
   @Override
   protected void buildGraphics(boolean isGhost) {
-    img = getImageView(false); // TODO for now always off
+    img = new ImageView(getImage(false));
     img.setPreserveRatio(true);
     img.setFitWidth(FIT_WIDTH);
     if (isGhost) {
@@ -50,10 +51,14 @@ public abstract class BooleanStateImageUIC extends UIComponent {
     return img;
   }
   
-  private ImageView getImageView(boolean on) {
+  public void setState(boolean on) {
+    img.setImage(getImage(on));
+  }
+  
+  private Image getImage(boolean on) {
     String base = getImageFilenameBase();
     String filename = base + (on ? "-on.png" : "-off.png");
-    return new ImageView(getClass().getResource(filename).toExternalForm());
+    return new Image(getClass().getResource(filename).toExternalForm());
   }
   
   /**

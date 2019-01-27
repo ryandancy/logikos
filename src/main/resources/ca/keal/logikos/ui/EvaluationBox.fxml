@@ -7,5 +7,5 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:id="evaluationBox"
       fx:controller="ca.keal.logikos.ui.EvaluationBoxController"
-      style="-fx-background-color: #AAA; -fx-stroke: #111"
-      maxHeight="20.0" maxWidth="300.0" />
+      style="-fx-background-color: #AAA; -fx-border-color: #111; -fx-border-width: 3px"
+      maxHeight="23.0" maxWidth="300.0" />
