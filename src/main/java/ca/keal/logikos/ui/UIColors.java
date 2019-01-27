@@ -11,6 +11,14 @@ public final class UIColors {
   public static final Color FOREGROUND_COLOR = Color.BLACK;
   public static final Color BACKGROUND_COLOR = Color.WHITE;
   
+  /**
+   * @return The correct foreground colour ({@link #GHOST_COLOR} or {@link #FOREGROUND_COLOR}) for ghost or non-ghost
+   * components.
+   */
+  public static Color foreground(boolean isGhost) {
+    return isGhost ? GHOST_COLOR : FOREGROUND_COLOR;
+  }
+  
   // Can't be instantiated
   private UIColors() {}
   

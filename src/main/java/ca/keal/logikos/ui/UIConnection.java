@@ -97,10 +97,10 @@ public class UIConnection extends Group implements Selectable {
   }
   
   private void buildGraphics() {
-    start = new Circle(0, 0, START_END_RADIUS, isGhost ? UIColors.GHOST_COLOR : UIColors.FOREGROUND_COLOR);
+    start = new Circle(0, 0, START_END_RADIUS, UIColors.foreground(isGhost));
     start.setMouseTransparent(isGhost);
     
-    end = new Circle(START_END_RADIUS, isGhost ? UIColors.GHOST_COLOR : UIColors.FOREGROUND_COLOR);
+    end = new Circle(START_END_RADIUS, UIColors.foreground(isGhost));
     end.centerXProperty().bind(toCenterXProperty);
     end.centerYProperty().bind(toCenterYProperty);
     end.setMouseTransparent(isGhost);
@@ -110,7 +110,7 @@ public class UIConnection extends Group implements Selectable {
     wire.setStartY(0);
     wire.endXProperty().bind(toCenterXProperty);
     wire.endYProperty().bind(toCenterYProperty);
-    wire.setStroke(isGhost ? UIColors.GHOST_COLOR : UIColors.FOREGROUND_COLOR);
+    wire.setStroke(UIColors.foreground(isGhost));
     wire.setStrokeWidth(LINE_WIDTH);
     wire.setMouseTransparent(isGhost);
     

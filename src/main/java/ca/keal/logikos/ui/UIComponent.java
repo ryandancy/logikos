@@ -100,7 +100,7 @@ public class UIComponent extends Group implements Selectable {
   protected void buildGraphics(boolean isGhost) {
     // TODO custom graphics for non-UserGate FieldComponents
     
-    Color fgColor = isGhost ? UIColors.GHOST_COLOR : UIColors.FOREGROUND_COLOR;
+    Color fgColor = UIColors.foreground(isGhost);
     
     // Construct the name
     Text name = new Text(displayName);

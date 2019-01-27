@@ -30,17 +30,17 @@ public abstract class BooleanStateImageUIC extends UIComponent {
       img.setEffect(new ColorAdjust(0, -0.7, 0, 0)); // desaturate, turn mostly greyscale
       img.setOpacity(0.75);
     }
-  
+    
     Bounds bounds = img.getLayoutBounds();
     double xCoord = -bounds.getWidth() / 2;
     double yCoord = -bounds.getHeight() / 2;
-  
+    
     img.setLayoutX(xCoord);
     img.setLayoutY(yCoord);
-  
+    
     getChildren().add(img);
-  
-    Color portColor = isGhost ? UIColors.GHOST_COLOR : UIColors.FOREGROUND_COLOR;
+    
+    Color portColor = UIColors.foreground(isGhost);
     addPortCircles(true, getInputPorts(), portColor, bounds.getWidth(), xCoord);
     addPortCircles(false, getOutputPorts(), portColor, bounds.getWidth(), xCoord);
   }
