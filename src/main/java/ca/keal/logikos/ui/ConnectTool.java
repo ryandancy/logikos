@@ -3,6 +3,11 @@ package ca.keal.logikos.ui;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.Queue;
+
+// TODO there are all kinds of bugs when moving the pane around and connecting things
 public class ConnectTool extends Tool {
   
   private UIComponent storedComponent = null; // if null: no output port selected
@@ -36,8 +41,8 @@ public class ConnectTool extends Tool {
       Node port = (isInputStored ? storedComponent.getInputPorts()
           : storedComponent.getOutputPorts())[storedPortNumber];
       Bounds portBounds = fieldPane.sceneToLocal(port.localToScene(port.getLayoutBounds()));
-      ghost.setLayoutX(fieldPane.paneToRealX(portBounds.getMinX() + portBounds.getWidth() / 2));
-      ghost.setLayoutY(fieldPane.paneToRealY(portBounds.getMinY() + portBounds.getHeight() / 2));
+      ghost.setLayoutX(fieldPane.paneToRealX(portBounds.getMinX()) + (portBounds.getWidth() / 2));
+      ghost.setLayoutY(fieldPane.paneToRealY(portBounds.getMinY()) + (portBounds.getHeight() / 2));
       ghost.setVisible(true);
       fieldPane.getContentChildren().add(ghost);
       ghost.toFront();
@@ -46,6 +51,12 @@ public class ConnectTool extends Tool {
         // The user clicked on the same kind of port: store that port's data
         clearStoredPortData();
         onClick(position);
+        return;
+      }
+      
+      // Validate the connection
+      if (!isValidConnection(position)) {
+        clearStoredPortData();
         return;
       }
       
@@ -84,6 +95,33 @@ public class ConnectTool extends Tool {
     connection.setLayoutX(outputCenterX);
     connection.setLayoutY(outputCenterY);
     fieldPane.getContentChildren().add(connection);
+  }
+  
+  private boolean isValidConnection(MousePosition position) {
+    // Check for circular connections: traverse tree from input end and if the output end is reached it's circular
+    UIComponent initial;
+    UIComponent lookingFor;
+    if (position.getPortOver().isInput()) {
+      initial = position.getComponent();
+      lookingFor = storedComponent;
+    } else {
+      initial = storedComponent;
+      lookingFor = position.getComponent();
+    }
+    
+    Queue<UIComponent> toCheck = new ArrayDeque<>();
+    toCheck.add(initial);
+    while (!toCheck.isEmpty()) {
+      UIComponent current = toCheck.remove();
+      if (current == lookingFor) return false;
+      for (List<UIConnection> outputConnections : current.getOutputConnectionLists()) {
+        for (UIConnection outputConnection : outputConnections) {
+          toCheck.add(outputConnection.getToComponent());
+        }
+      }
+    }
+    
+    return true;
   }
   
   @Override
