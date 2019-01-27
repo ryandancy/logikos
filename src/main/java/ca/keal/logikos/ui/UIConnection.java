@@ -1,7 +1,10 @@
 package ca.keal.logikos.ui;
 
 import ca.keal.logikos.logic.Connection;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.effect.BlurType;
@@ -29,6 +32,11 @@ public class UIConnection extends Group implements Selectable {
   private final UIComponent toComponent;
   private final int toInputPort;
   
+  private final boolean isGhost;
+  
+  private DoubleProperty toCenterXProperty = new SimpleDoubleProperty();
+  private DoubleProperty toCenterYProperty = new SimpleDoubleProperty();
+  
   private Circle start;
   private Circle end;
   private Line wire;
@@ -38,33 +46,83 @@ public class UIConnection extends Group implements Selectable {
     this.fromOutputPort = fromOutputPort;
     this.toComponent = toComponent;
     this.toInputPort = toInputPort;
+    isGhost = false;
+    
+    setToCoordPropertiesFromComponents();
+    
     buildGraphics();
     setupEventHandling();
   }
   
-  private void buildGraphics() {
+  /**
+   * @return A ghost UIConnection with no data.
+   */
+  public static UIConnection ghost() {
+    return new UIConnection();
+  }
+  
+  private UIConnection() {
+    // Build a ghost connection with no data (don't call any of its methods)
+    isGhost = true;
+    fromComponent = null;
+    fromOutputPort = -1;
+    toComponent = null;
+    toInputPort = -1;
+    setToCenterRelativeCoords(0, 0);
+    buildGraphics();
+    setVisible(false);
+  }
+  
+  private void setToCoordPropertiesFromComponents() {
     // For some reason the coords of end node are adjusted by "from" port's center coordinates in parent, so we
     // have to compensate
+    
     Node fromPort = fromComponent.getOutputPorts()[fromOutputPort];
     Bounds fromPortBIP = fromPort.getBoundsInParent();
+    
     Node toPort = toComponent.getInputPorts()[toInputPort];
     Bounds toPortBounds = fromPort.sceneToLocal(toPort.localToScene(toPort.getBoundsInLocal()));
+    
     double toCenterX = center(toPortBounds.getMinX(), toPortBounds.getWidth())
         - center(fromPortBIP.getMinX(), fromPortBIP.getWidth());
     double toCenterY = center(toPortBounds.getMinY(), toPortBounds.getHeight())
         - center(fromPortBIP.getMinY(), fromPortBIP.getHeight());
     
-    start = new Circle(0, 0, START_END_RADIUS, UIColours.FOREGROUND_COLOR);
-    end = new Circle(toCenterX, toCenterY, START_END_RADIUS, UIColours.FOREGROUND_COLOR);
+    toCenterXProperty.set(toCenterX);
+    toCenterYProperty.set(toCenterY);
+  }
   
-    wire = new Line(0, 0, toCenterX, toCenterY);
-    wire.setFill(UIColours.FOREGROUND_COLOR);
+  private double center(double pos, double length) {
+    return pos + (length / 2);
+  }
+  
+  private void buildGraphics() {
+    start = new Circle(0, 0, START_END_RADIUS, isGhost ? UIColours.GHOST_COLOR : UIColours.FOREGROUND_COLOR);
+    start.setMouseTransparent(isGhost);
+    
+    end = new Circle(START_END_RADIUS, isGhost ? UIColours.GHOST_COLOR : UIColours.FOREGROUND_COLOR);
+    end.centerXProperty().bind(toCenterXProperty);
+    end.centerYProperty().bind(toCenterYProperty);
+    end.setMouseTransparent(isGhost);
+    
+    wire = new Line();
+    wire.setStartX(0);
+    wire.setStartY(0);
+    wire.endXProperty().bind(toCenterXProperty);
+    wire.endYProperty().bind(toCenterYProperty);
+    wire.setStroke(isGhost ? UIColours.GHOST_COLOR : UIColours.FOREGROUND_COLOR);
     wire.setStrokeWidth(LINE_WIDTH);
+    wire.setMouseTransparent(isGhost);
     
     // transparent on top to catch the mouse events
-    Line clickableArea = new Line(0, 0, toCenterX, toCenterY);
+    Line clickableArea = new Line();
+    clickableArea.setStartX(0);
+    clickableArea.setStartY(0);
+    clickableArea.endXProperty().bind(toCenterXProperty);
+    clickableArea.endYProperty().bind(toCenterYProperty);
     clickableArea.setOpacity(0);
     clickableArea.setStrokeWidth(CLICKABLE_WIDTH);
+    clickableArea.setMouseTransparent(isGhost);
     
     getChildren().addAll(start, end, wire, clickableArea);
     
@@ -72,10 +130,6 @@ public class UIConnection extends Group implements Selectable {
     clickableArea.toBack();
     start.toFront();
     end.toFront();
-  }
-  
-  private double center(double pos, double length) {
-    return pos + (length / 2);
   }
   
   private void setupEventHandling() {
@@ -132,6 +186,24 @@ public class UIConnection extends Group implements Selectable {
     return toInputPort;
   }
   
+  public double getToCenterX() {
+    return toCenterXProperty.get();
+  }
+  
+  public double getToCenterY() {
+    return toCenterYProperty.get();
+  }
+  
+  private void setToCenterRelativeCoords(double toCenterX, double toCenterY) {
+    toCenterXProperty.set(toCenterX);
+    toCenterYProperty.set(toCenterY);
+  }
+  
+  public void setToCenter(double paneX, double paneY) {
+    Point2D relCoord = parentToLocal(paneX, paneY);
+    setToCenterRelativeCoords(relCoord.getX(), relCoord.getY());
+  }
+  
   @Override
   public void select() {
     wire.setEffect(SELECTED_DROP_SHADOW);
@@ -144,6 +216,10 @@ public class UIConnection extends Group implements Selectable {
   
   @Override
   public void delete() {
+    if (isGhost) {
+      throw new UnsupportedOperationException("Cannot delete ghost connection");
+    }
+    
     fromComponent.getOutputConnections(fromOutputPort).remove(this);
     toComponent.getInputConnections()[toInputPort] = null;
   
@@ -160,6 +236,10 @@ public class UIConnection extends Group implements Selectable {
    * "to" logic component.
    */
   private Connection getLogicConnection() {
+    if (isGhost) {
+      throw new UnsupportedOperationException("A ghost has no real connection");
+    }
+    
     try {
       return toComponent.getFieldComponent()
           .getLogicComponent()

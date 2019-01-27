@@ -3,12 +3,14 @@ package ca.keal.logikos.ui;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
-// TODO a "ghost" similar to that in PlaceComponentTool
 public class ConnectTool extends Tool {
   
   private UIComponent storedComponent = null; // if null: no output port selected
   private int storedPortNumber = -1;
   private boolean isInputStored;
+  
+  /** The ghost connection displayed when one port has been clicked on and the other has not yet */
+  private UIConnection ghost = UIConnection.ghost();
   
   public ConnectTool() {
     super("Connect", "Connect an input and an output port on two components");
@@ -28,7 +30,17 @@ public class ConnectTool extends Tool {
       storedComponent = position.getComponent();
       storedPortNumber = portOver.getPortNumber();
       isInputStored = portOver.isInput();
-      // TODO add a ghost here
+      
+      // Add the ghost
+      PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
+      Node port = (isInputStored ? storedComponent.getInputPorts()
+          : storedComponent.getOutputPorts())[storedPortNumber];
+      Bounds portBounds = fieldPane.sceneToLocal(port.localToScene(port.getLayoutBounds()));
+      ghost.setLayoutX(fieldPane.paneToRealX(portBounds.getMinX() + portBounds.getWidth() / 2));
+      ghost.setLayoutY(fieldPane.paneToRealY(portBounds.getMinY() + portBounds.getHeight() / 2));
+      ghost.setVisible(true);
+      fieldPane.getContentChildren().add(ghost);
+      ghost.toFront();
     } else {
       if (isInputStored == portOver.isInput()) {
         // The user clicked on the same kind of port: store that port's data
@@ -74,9 +86,21 @@ public class ConnectTool extends Tool {
     fieldPane.getContentChildren().add(connection);
   }
   
+  @Override
+  public void onHover(MousePosition position) {
+    if (!ghost.isVisible()) return;
+    
+    // Update the 'to' center coordinates of the ghost to make it 'stretch' with the mouse
+    ghost.setToCenter(position.getPaneX(), position.getPaneY());
+  }
+  
   private void clearStoredPortData() {
     storedComponent = null;
     storedPortNumber = -1;
+    
+    // Clear the ghost
+    ghost.setVisible(false);
+    Logikos.getInstance().getFieldPaneController().getFieldPane().getContentChildren().remove(ghost);
   }
   
 }
