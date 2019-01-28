@@ -205,6 +205,14 @@ public class UIConnection extends Group implements Selectable {
     setToCenterRelativeCoords(relCoord.getX(), relCoord.getY());
   }
   
+  public void setStateVisual(boolean on) {
+    wire.setStroke(UIColors.onOrOff(on));
+  }
+  
+  public void resetStateVisual() {
+    wire.setStroke(UIColors.foreground(isGhost));
+  }
+  
   @Override
   public void select() {
     wire.setEffect(SELECTED_DROP_SHADOW);
