@@ -77,8 +77,8 @@ public class InputFC extends FieldComponent {
    */
   public enum Type {
     BUTTON_RED(Behaviour.PRESS),
-    BUTTON_BLUE(Behaviour.PRESS),
     BUTTON_GREEN(Behaviour.PRESS),
+    BUTTON_BLUE(Behaviour.PRESS),
     BUTTON_YELLOW(Behaviour.PRESS),
     SWITCH(Behaviour.TOGGLE),
     BINARY(Behaviour.TOGGLE);
