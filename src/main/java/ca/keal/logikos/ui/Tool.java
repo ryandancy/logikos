@@ -132,10 +132,24 @@ public abstract class Tool {
   public void onHover(MousePosition position) {}
   
   /**
-   * Called when the user clicks on a position on the field.
+   * Called when the user clicks on a position on the field with the primary mouse button.
    * @param position The {@link MousePosition} containing data about the mouse's position.
    */
   public void onClick(MousePosition position) {}
+  
+  /**
+   * Called when the user presses the primary mouse button on a position on the field.
+   * Important: not supported by {@link UIConnection} and does not distinguish ports.
+   * @param position The {@link MousePosition} containing data about the mouse's position.
+   */
+  public void onMousePress(MousePosition position) {}
+  
+  /**
+   * Called when the user releases the primary mouse button on a position on the field.
+   * Important: not supported by {@link UIConnection} and does not distinguish ports.
+   * @param position The {@link MousePosition} containing data about the mouse's position.
+   */
+  public void onMouseRelease(MousePosition position) {}
   
   /**
    * Called when the user presses a key.

@@ -7,6 +7,8 @@ import javafx.scene.Parent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
+import java.util.function.Consumer;
+
 /**
  * The controller class for the FieldPane.
  */
@@ -24,15 +26,29 @@ public class FieldPaneController {
     onClick(e, null);
   }
   
+  @FXML
+  public void onPress(MouseEvent e) {
+    if (e.getButton() == MouseButton.PRIMARY) {
+      callSelectedToolMouseHook(e, null, Logikos.getInstance().getSelectedTool()::onMousePress);
+    }
+  }
+  
+  @FXML
+  public void onRelease(MouseEvent e) {
+    if (e.getButton() == MouseButton.PRIMARY) {
+      callSelectedToolMouseHook(e, null, Logikos.getInstance().getSelectedTool()::onMouseRelease);
+    }
+  }
+  
   public void onMouseMove(MouseEvent e, MousePosition.PortOver portOver) {
     // Call the selected tool's hover hook
-    callSelectedToolMouseHook(e, portOver, false);
+    callSelectedToolMouseHook(e, portOver, this::hover);
   }
   
   public void onClick(MouseEvent e, MousePosition.PortOver portOver) {
     // Call the selected tool's click hook for the left mouse button
     if (e.getButton() == MouseButton.PRIMARY) {
-      callSelectedToolMouseHook(e, portOver, true);
+      callSelectedToolMouseHook(e, portOver, this::click);
     }
   }
   
@@ -44,7 +60,8 @@ public class FieldPaneController {
   }
   
   // Call the selected tool's click hook if click is true or its hover hook if click is false
-  private void callSelectedToolMouseHook(MouseEvent e, MousePosition.PortOver portOver, boolean click) {
+  private void callSelectedToolMouseHook(
+      MouseEvent e, MousePosition.PortOver portOver, Consumer<MousePosition> hook) {
     // Get the component or connection it's over
     UIComponent overComponent = null;
     UIConnection overConnection = null;
@@ -68,11 +85,7 @@ public class FieldPaneController {
     MousePosition position = getMousePosition(e, overComponent, overConnection, portOver);
     
     // Call the hook
-    if (click) {
-      click(position);
-    } else {
-      hover(position);
-    }
+    hook.accept(position);
   }
   
   /**

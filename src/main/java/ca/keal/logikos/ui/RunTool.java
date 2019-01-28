@@ -14,6 +14,9 @@ import javafx.scene.Node;
 // TODO a better lookup system for LogicComponent -> FieldComponent -> UIComponent
 public class RunTool extends Tool implements EvaluationListener {
   
+  // for pressing/releasing pressable components
+  private InputUIC pressedInputUIC;
+  
   public RunTool() {
     super("Run", "Run the chip", Location.EVALUATION_BOX, true);
   }
@@ -27,11 +30,38 @@ public class RunTool extends Tool implements EvaluationListener {
     InputFC inputFC = (InputFC) inputUIC.getFieldComponent();
     if (inputFC.getType().getBehaviour() != InputFC.Type.Behaviour.TOGGLE) return;
     
-    boolean newValue = !inputFC.getValue();
+    setInputValue(inputUIC, inputFC, !inputFC.getValue());
+    evaluate();
+  }
+  
+  @Override
+  public void onMousePress(MousePosition position) {
+    // Set pressable InputUICs to on
+    if (!(position.getComponent() instanceof InputUIC)) return;
+    
+    InputUIC inputUIC = (InputUIC) position.getComponent();
+    InputFC inputFC = (InputFC) inputUIC.getFieldComponent();
+    if (inputFC.getType().getBehaviour() != InputFC.Type.Behaviour.PRESS) return;
+    
+    setInputValue(inputUIC, inputFC, true);
+    evaluate();
+    
+    // Store the inputUIC for later release
+    pressedInputUIC = inputUIC;
+  }
+  
+  @Override
+  public void onMouseRelease(MousePosition position) {
+    // If an inputUIC was previously stored, set it to off
+    if (pressedInputUIC == null) return;
+    setInputValue(pressedInputUIC, (InputFC) pressedInputUIC.getFieldComponent(), false);
+    evaluate();
+    pressedInputUIC = null;
+  }
+  
+  private void setInputValue(InputUIC inputUIC, InputFC inputFC, boolean newValue) {
     inputFC.getLogicComponent().setValue(newValue);
     inputUIC.setState(newValue);
-    
-    evaluate();
   }
   
   @Override

@@ -77,6 +77,14 @@ public class UIComponent extends Group implements Selectable {
       Logikos.getInstance().getFieldPaneController().onMouseMove(e, null);
       e.consume();
     });
+    addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+      Logikos.getInstance().getFieldPaneController().onPress(e);
+      e.consume();
+    });
+    addEventHandler(MouseEvent.MOUSE_RELEASED, e -> {
+      Logikos.getInstance().getFieldPaneController().onRelease(e);
+      e.consume();
+    });
     
     for (int i = 0; i < inputPorts.length; i++) {
       setupPortEventHandling(inputPorts[i], i, true);
@@ -95,6 +103,7 @@ public class UIComponent extends Group implements Selectable {
       Logikos.getInstance().getFieldPaneController().onMouseMove(e, new MousePosition.PortOver(input, portNumber));
       e.consume();
     });
+    // TODO if port detection is needed on press/release events, add that here
   }
   
   protected void buildGraphics(boolean isGhost) {
