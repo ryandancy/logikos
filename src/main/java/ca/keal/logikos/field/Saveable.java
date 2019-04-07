@@ -5,9 +5,9 @@ import org.w3c.dom.Element;
 
 /**
  * Represents a saveable field object, which may serialize itself to an XML document and populate itself from an XML
- * element. {@code Saveable}s must have zero-argument constructors with which the document opener may initialize an
- * object to be populated. The XML element representing this Saveable will have a tag name equal to that returned by
- * {@link #getElementName()}.
+ * element. {@code Saveable}s must have public zero-argument constructors with which the document opener may initialize
+ * an object to be populated. They must also have public, static, final strings called {@code XML_TAG} whose value are
+ * the name of the XML tag in which they are saved; this is done for backwards compatibility with class name changes.
  */
 public interface Saveable {
   
@@ -20,11 +20,5 @@ public interface Saveable {
    * Populate this {@link Saveable} from the data previously serialized in {@code serialized}.
    */
   void populate(Element serialized);
-  
-  /**
-   * Return the name of the XML tag that will represent this field object. For backwards compatibility with future
-   * class name changes. This must be a valid XML tag name and must be unique. 
-   */
-  String getElementName();
   
 }

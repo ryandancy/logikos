@@ -8,6 +8,8 @@ import org.w3c.dom.Element;
  */
 public class Position implements Saveable {
   
+  public static final String XML_TAG = "position";
+  
   // effectively final, but not officially final for Saveable
   private double x;
   private double y;
@@ -46,11 +48,6 @@ public class Position implements Saveable {
   public void populate(Element serialized) {
     x = Double.parseDouble(serialized.getElementsByTagName("x").item(0).getTextContent());
     y = Double.parseDouble(serialized.getElementsByTagName("y").item(0).getTextContent());
-  }
-  
-  @Override
-  public String getElementName() {
-    return "position";
   }
   
   @Override
