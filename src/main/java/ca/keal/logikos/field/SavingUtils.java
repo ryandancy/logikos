@@ -10,13 +10,14 @@ public final class SavingUtils {
   private SavingUtils() {}
   
   /**
-   * Generate (i.e. create and populate) a {@link Saveable} of the specific type from XML.
+   * Generate (i.e. create and populate) a {@link Saveable} of the specific type from XML. This assumes there is only
+   * one of the tag under the parent element.
    * @param saveableClass The class of the {@link Saveable} to be generated.
    * @param parent The parent element of the {@link Saveable}'s tag.
    * @param <S> The type of {@link Saveable} to be generated.
    * @return The generated {@link Saveable} object.
    */
-  public <S extends Saveable> S generate(Class<S> saveableClass, Element parent) {
+  public static <S extends Saveable> S generate(Class<S> saveableClass, Element parent) {
     // Get the tag name from the class' static field
     String tagName;
     try {
