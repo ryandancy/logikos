@@ -1,10 +1,20 @@
-apply plugin: 'java'
-apply plugin: 'idea'
-
+plugins {
+    id 'java'
+    id 'idea'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
 repositories {
     mavenCentral()
 }
-
+javafx {
+    version 13
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
+}
+jar {
+    manifest {
+        attributes 'Main-Class': 'ca.keal.logikos.ui.Logikos'
+    }
+}
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.3.1'
