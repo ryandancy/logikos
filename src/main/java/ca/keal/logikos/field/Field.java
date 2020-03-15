@@ -19,6 +19,9 @@ public class Field {
   private final List<InputFC> inputFCs = new ArrayList<>();
   private final List<OutputFC> outputFCs = new ArrayList<>();
   
+  private String filename = null;
+  private String name = null;
+  
   public List<FieldComponent> getFieldComponents() {
     return Collections.unmodifiableList(fieldComponents);
   }
@@ -52,6 +55,22 @@ public class Field {
     } else if (component instanceof OutputFC) {
       outputFCs.remove(component);
     }
+  }
+  
+  public String getFilename() {
+    return filename;
+  }
+  
+  public void setFilename(String filename) {
+    this.filename = filename;
+  }
+  
+  public String getName() {
+    return name;
+  }
+  
+  public void setName(String name) {
+    this.name = name;
   }
   
   /**

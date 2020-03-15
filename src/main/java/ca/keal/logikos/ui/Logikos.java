@@ -13,6 +13,9 @@ import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.stage.Stage;
@@ -89,6 +92,16 @@ public class Logikos extends Application {
     // TODO update this with save status - SavingManager as util class?
     this.primaryStage = primaryStage;
     primaryStage.setTitle("Logikos");
+    
+    // Add the save option
+    MenuBar menuBar = new MenuBar();
+    Menu file = new Menu("File");
+    MenuItem save = new MenuItem("Save");
+    save.setOnAction(e -> SaveUtil.save(primaryStage, field));
+    MenuItem saveAs = new MenuItem("Save as...");
+    saveAs.setOnAction(e -> SaveUtil.saveAs(primaryStage, field));
+    file.getItems().addAll(save, saveAs);
+    menuBar.getMenus().add(file);
     
     // Set RootLayout as the scene
     try {
