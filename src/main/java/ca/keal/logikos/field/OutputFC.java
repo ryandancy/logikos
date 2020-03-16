@@ -2,6 +2,8 @@ package ca.keal.logikos.field;
 
 import ca.keal.logikos.logic.EvaluationListener;
 import ca.keal.logikos.logic.Output;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A {@link FieldComponent} representing specifically an output on the {@link Field}. It encapsulates a {@link Output}
@@ -41,6 +43,13 @@ public class OutputFC extends FieldComponent {
    */
   public enum Type {
     LAMP, BINARY, RED, GREEN, BLUE
+  }
+  
+  @Override
+  public Element toXml(Document doc) {
+    Element elem = super.toXml(doc);
+    elem.setAttribute("output", "true");
+    return elem;
   }
   
 }

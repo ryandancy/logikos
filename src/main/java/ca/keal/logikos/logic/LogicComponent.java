@@ -1,5 +1,8 @@
 package ca.keal.logikos.logic;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.IntFunction;
@@ -106,6 +109,22 @@ public abstract class LogicComponent {
   @Override
   public int hashCode() {
     return getId().hashCode();
+  }
+
+  /**
+   * Serialize this LogicComponent to XML.
+   */
+  public Element toXml(Document doc) {
+    Element elem = doc.createElement("logicComponent");
+    elem.setAttribute("uuid", getId().toString());
+    elem.setAttribute("type", getName());
+    
+    // We only serialize the inputs because they're sufficient to rebuild all the connections
+    for (Port.Input port : getInputs()) {
+      elem.appendChild(port.toXml(doc));
+    }
+    
+    return elem;
   }
   
 }

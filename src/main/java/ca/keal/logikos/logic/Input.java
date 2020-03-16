@@ -61,7 +61,7 @@ public class Input extends LogicComponent {
   
   @Override
   public String getName() {
-    return "Input[value=" + value + "]";
+    return "INPUT";
   }
   
 }

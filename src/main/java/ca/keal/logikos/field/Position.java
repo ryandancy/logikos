@@ -1,5 +1,8 @@
 package ca.keal.logikos.field;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 /**
  * A position on the field.
  */
@@ -36,6 +39,13 @@ public class Position {
   @Override
   public String toString() {
     return "Position(" + x + ", " + y + ")";
+  }
+  
+  public Element toXml(Document doc) {
+    Element elem = doc.createElement("position");
+    elem.setAttribute("x", Double.toString(getX()));
+    elem.setAttribute("y", Double.toString(getY()));
+    return elem;
   }
   
 }

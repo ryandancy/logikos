@@ -1,5 +1,8 @@
 package ca.keal.logikos.logic;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,8 +22,6 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
   
   private final int portNumber;
   private final LogicComponent component;
-  
-  //private Connection connection = null;
   
   private Port(int number, LogicComponent component) {
     if (component == null) throw new NullPointerException("Port's component cannot be null");
@@ -100,6 +101,17 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
         throw new IllegalStateException("Port had no connection when trying to get input value");
       }
       return connection.getValue(listener);
+    }
+
+    /**
+     * Serialize this input port to XML.
+     */
+    public Element toXml(Document doc) {
+      Element elem = doc.createElement("inputPort");
+      elem.setAttribute("num", Integer.toString(getPortNumber()));
+      elem.setAttribute("fromId", getConnection() == null ? "null"
+          : getConnection().getOutput().getComponent().getId().toString());
+      return elem;
     }
     
   }

@@ -22,7 +22,7 @@ public class Output extends LogicComponent {
   
   @Override
   public String getName() {
-    return "Output";
+    return "OUTPUT";
   }
   
 }

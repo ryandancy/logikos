@@ -12,12 +12,14 @@ import ca.keal.logikos.logic.Output;
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -95,6 +97,7 @@ public class Logikos extends Application {
     
     // Add the save option
     MenuBar menuBar = new MenuBar();
+    menuBar.setUseSystemMenuBar(true);
     Menu file = new Menu("File");
     MenuItem save = new MenuItem("Save");
     save.setOnAction(e -> SaveUtil.save(primaryStage, field));
@@ -107,7 +110,11 @@ public class Logikos extends Application {
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("RootLayout.fxml"));
       loader.setController(this);
-      primaryStage.setScene(new Scene(loader.load()));
+      
+      BorderPane borderPane = loader.load();
+      borderPane.setTop(menuBar);
+      
+      primaryStage.setScene(new Scene(borderPane));
       
       // Handle key presses + scrolling globally
       primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyPress);

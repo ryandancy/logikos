@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<SplitPane xmlns="http://javafx.com/javafx"
-           xmlns:fx="http://javafx.com/fxml"
-           prefHeight="600" prefWidth="1000"
-           dividerPositions="0.3">
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml">
   
-  <fx:include fx:id="toolPane" source="ToolPane.fxml" />
+  <center>
+    <SplitPane prefHeight="600" prefWidth="1000"
+               dividerPositions="0.3">
+      
+      <fx:include fx:id="toolPane" source="ToolPane.fxml" />
+      
+      <StackPane>
+        <fx:include fx:id="fieldPane" source="FieldPane.fxml" />
+        <fx:include fx:id="evaluationBox" source="EvaluationBox.fxml" StackPane.alignment="TOP_RIGHT" />
+      </StackPane>
+      
+    </SplitPane>
+  </center>
   
-  <StackPane>
-    <fx:include fx:id="fieldPane" source="FieldPane.fxml" />
-    <fx:include fx:id="evaluationBox" source="EvaluationBox.fxml" StackPane.alignment="TOP_RIGHT" />
-  </StackPane>
-  
-</SplitPane>
+</BorderPane>

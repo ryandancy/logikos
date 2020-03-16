@@ -1,6 +1,8 @@
 package ca.keal.logikos.field;
 
 import ca.keal.logikos.logic.LogicComponent;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A FieldComponent is something on the {@link Field} - a gate, input or output. It's essentially a wrapper for
@@ -47,6 +49,16 @@ public class FieldComponent {
   @Override
   public String toString() {
     return "FieldComponent[logicComponent=" + logicComponent + ", position=" + position + "]";
+  }
+
+  /**
+   * Serialize this FieldComponent to XML.
+   */
+  public Element toXml(Document doc) {
+    Element elem = doc.createElement("fieldComponent");
+    elem.appendChild(getPosition().toXml(doc));
+    elem.appendChild(getLogicComponent().toXml(doc));
+    return elem;
   }
   
 }

@@ -1,6 +1,8 @@
 package ca.keal.logikos.field;
 
 import ca.keal.logikos.logic.Input;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * A {@link FieldComponent} representing specifically an input on the {@link Field}. It encapsulates an {@link Input}
@@ -102,6 +104,13 @@ public class InputFC extends FieldComponent {
   public String toString() {
     return "InputFC[type=" + getType() + ", logicComponent=" + getLogicComponent()
         + ", position=" + getPosition() + ", keyBinding=" + getKeyBinding() + "]";
+  }
+  
+  @Override
+  public Element toXml(Document doc) {
+    Element elem = super.toXml(doc);
+    elem.setAttribute("input", "true");
+    return elem;
   }
   
 }

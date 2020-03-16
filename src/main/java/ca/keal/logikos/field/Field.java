@@ -1,6 +1,8 @@
 package ca.keal.logikos.field;
 
 import ca.keal.logikos.logic.EvaluationListener;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,6 +88,19 @@ public class Field {
       output[i] = outputFCs.get(i).evaluate(listener);
     }
     return output;
+  }
+
+  /**
+   * Serialize the entire {@link Field} to an XML element.
+   * @return An {@link Element} from which the field can be recovered.
+   */
+  public Element toXml(Document doc) {
+    Element root = doc.createElement("field");
+    root.setAttribute("name", getName());
+    for (FieldComponent fc : fieldComponents) {
+      root.appendChild(fc.toXml(doc));
+    }
+    return root;
   }
   
 }
