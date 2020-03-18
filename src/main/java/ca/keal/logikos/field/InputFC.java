@@ -1,6 +1,7 @@
 package ca.keal.logikos.field;
 
 import ca.keal.logikos.logic.Input;
+import ca.keal.logikos.util.DeserializationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -109,8 +110,39 @@ public class InputFC extends FieldComponent {
   @Override
   public Element toXml(Document doc) {
     Element elem = super.toXml(doc);
-    elem.setAttribute("input", "true");
+    elem.setAttribute("input", "input");
+    elem.setAttribute("inputType", getType().name());
+    elem.setAttribute("keyBinding", Integer.toString(getKeyBinding()));
     return elem;
+  }
+  
+  /** Perform InputFC-specific parsing on the element. */
+  public static InputFC fromXml(Element elem, Position pos, Input lc) throws DeserializationException {
+    if (!elem.hasAttribute("input")) {
+      throw new DeserializationException("Input field component element must have attribute 'input'.");
+    }
+    if (!elem.hasAttribute("inputType") || !elem.hasAttribute("keyBinding")) {
+      throw new DeserializationException("Input field component element must have attributes " +
+          "'inputType' and 'keyBinding'");
+    }
+    
+    Type inputType;
+    try {
+      inputType = Type.valueOf(elem.getAttribute("inputType"));
+    } catch (IllegalArgumentException e) {
+      throw new DeserializationException("Unknown input type: " + elem.getAttribute("inputType"), e);
+    }
+    
+    int keyBinding;
+    try {
+      keyBinding = Integer.parseInt(elem.getAttribute("keyBinding"));
+    } catch (NumberFormatException e) {
+      throw new DeserializationException("Illegal key binding integer: " + elem.getAttribute("keyBinding"), e);
+    }
+    
+    InputFC inputFC = new InputFC(lc, pos, inputType);
+    inputFC.setKeyBinding(keyBinding);
+    return inputFC;
   }
   
 }

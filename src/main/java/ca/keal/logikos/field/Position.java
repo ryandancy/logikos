@@ -1,7 +1,11 @@
 package ca.keal.logikos.field;
 
+import ca.keal.logikos.util.DeserializationException;
+import ca.keal.logikos.util.XmlUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import java.text.NumberFormat;
 
 /**
  * A position on the field.
@@ -46,6 +50,26 @@ public class Position {
     elem.setAttribute("x", Double.toString(getX()));
     elem.setAttribute("y", Double.toString(getY()));
     return elem;
+  }
+  
+  public static Position fromXml(Element elem) throws DeserializationException {
+    if (!elem.getTagName().equals("position")) {
+      throw new DeserializationException("Positions must have tag <position>.");
+    }
+    
+    Element xElem = XmlUtil.getDirectChildByTagName(elem, "x");
+    Element yElem = XmlUtil.getDirectChildByTagName(elem, "y");
+    
+    double x, y;
+    try {
+      x = Double.parseDouble(xElem.getTextContent());
+      y = Double.parseDouble(yElem.getTextContent());
+    } catch (NumberFormatException e) {
+      throw new DeserializationException("Illegal x or y number in position: x=" + xElem.getTextContent()
+          + ", y=" + yElem.getTextContent(), e);
+    }
+    
+    return new Position(x, y);
   }
   
 }

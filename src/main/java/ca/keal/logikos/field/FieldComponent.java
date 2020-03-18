@@ -1,8 +1,15 @@
 package ca.keal.logikos.field;
 
+import ca.keal.logikos.logic.Input;
 import ca.keal.logikos.logic.LogicComponent;
+import ca.keal.logikos.logic.Output;
+import ca.keal.logikos.util.DeserializationException;
+import ca.keal.logikos.util.XmlUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * A FieldComponent is something on the {@link Field} - a gate, input or output. It's essentially a wrapper for
@@ -59,6 +66,35 @@ public class FieldComponent {
     elem.appendChild(getPosition().toXml(doc));
     elem.appendChild(getLogicComponent().toXml(doc));
     return elem;
+  }
+
+  /**
+   * Partially deserialize XML returned by {@link #toXml(Document)} into a {@link FieldComponent}.
+   * {@link #fillInPortsFromXml(Map, Element)} must be called afterwards with a map of all UUIDs to FieldComponents.
+   */
+  // TODO put tag names into constants and don't use this magic string crap
+  public static FieldComponent instantiateFromXml(Element elem) throws DeserializationException {
+    if (!elem.getTagName().equals("fieldComponent")) {
+      throw new DeserializationException("Field component must have tag <fieldComponent>.");
+    }
+    
+    Element posElem = XmlUtil.getDirectChildByTagName(elem, "position");
+    Position pos = Position.fromXml(posElem);
+    Element logicElem = XmlUtil.getDirectChildByTagName(elem, "logicComponent");
+    LogicComponent lc = LogicComponent.fromXml(logicElem);
+    
+    // Handle the input/output attributes set by InputFC and OutputFC - this is tight coupling! bad! but whatever
+    if (elem.hasAttribute("input")) {
+      return InputFC.fromXml(elem, pos, (Input) lc);
+    } else if (elem.hasAttribute("output")) {
+      return OutputFC.fromXml(elem, pos, (Output) lc);
+    } else {
+      return new FieldComponent(lc, pos);
+    }
+  }
+  
+  public void fillInPortsFromXml(Map<UUID, LogicComponent> uuidToLC, Element fcElem) throws DeserializationException {
+    getLogicComponent().fillInPortsFromXml(uuidToLC, XmlUtil.getDirectChildByTagName(fcElem, "logicComponent"));
   }
   
 }

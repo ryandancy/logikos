@@ -2,6 +2,7 @@ package ca.keal.logikos.field;
 
 import ca.keal.logikos.logic.EvaluationListener;
 import ca.keal.logikos.logic.Output;
+import ca.keal.logikos.util.DeserializationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -48,8 +49,28 @@ public class OutputFC extends FieldComponent {
   @Override
   public Element toXml(Document doc) {
     Element elem = super.toXml(doc);
-    elem.setAttribute("output", "true");
+    elem.setAttribute("output", "output");
+    elem.setAttribute("outputType", getType().name());
     return elem;
+  }
+  
+  /** Perform OutputFC-specific parsing on the element. */
+  public static OutputFC fromXml(Element elem, Position pos, Output lc) throws DeserializationException {
+    if (!elem.hasAttribute("output")) {
+      throw new DeserializationException("Output field component element must have 'output' attribute.");
+    }
+    if (!elem.hasAttribute("outputType")) {
+      throw new DeserializationException("Output field component element must have 'outputType' attribute.");
+    }
+    
+    Type outputType;
+    try {
+      outputType = Type.valueOf(elem.getAttribute("outputType"));
+    } catch (IllegalArgumentException e) {
+      throw new DeserializationException("Unknown output type: " + elem.getAttribute("outputType"), e);
+    }
+    
+    return new OutputFC(lc, pos, outputType);
   }
   
 }

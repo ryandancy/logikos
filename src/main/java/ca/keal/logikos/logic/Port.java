@@ -1,10 +1,13 @@
 package ca.keal.logikos.logic;
 
+import ca.keal.logikos.util.DeserializationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 /**
  * A generic, abstract class representing a port on a {@link LogicComponent}. It has a non-negative port number and a
@@ -104,14 +107,60 @@ public abstract class Port<CONNECTABLE_TO extends Port> {
     }
 
     /**
-     * Serialize this input port to XML.
+     * Serialize this input port's connection to XML.
      */
     public Element toXml(Document doc) {
       Element elem = doc.createElement("inputPort");
-      elem.setAttribute("num", Integer.toString(getPortNumber()));
-      elem.setAttribute("fromId", getConnection() == null ? "null"
+      elem.setAttribute("fromId", getConnection() == null ? ""
           : getConnection().getOutput().getComponent().getId().toString());
+      elem.setAttribute("fromOutputPortNum", getConnection() == null ? ""
+          : Integer.toString(getConnection().getOutput().getPortNumber()));
       return elem;
+    }
+
+    /**
+     * Populate this input port's connection from the element output by {@link #toXml(Document)}.
+     */
+    public void populateFromXml(Map<UUID, LogicComponent> uuidToLC, Element elem) throws DeserializationException {
+      if (!elem.getTagName().equals("inputPort")) {
+        throw new DeserializationException("Input port tag name must be <inputPort>.");
+      }
+      if (!elem.hasAttribute("fromId") || !elem.hasAttribute("fromOutputPortNum")) {
+        throw new DeserializationException("Input port tag must have 'fromId' and 'fromOutputPortNum' attributes.");
+      }
+      
+      String fromIdStr = elem.getAttribute("fromId");
+      if (fromIdStr.isEmpty()) {
+        // empty means no connection
+        removeConnection();
+      } else {
+        // try to connect to the UUID specified
+        UUID uuid;
+        try {
+          uuid = UUID.fromString(fromIdStr);
+        } catch (IllegalArgumentException e) {
+          throw new DeserializationException("Invalid UUID: " + fromIdStr, e);
+        }
+        
+        if (!uuidToLC.containsKey(uuid)) {
+          throw new DeserializationException("Unknown logic component UUID: " + uuid.toString());
+        }
+        
+        int outputPortNum;
+        try {
+          outputPortNum = Integer.parseInt(elem.getAttribute("fromOutputPortNum"));
+        } catch (NumberFormatException e) {
+          throw new DeserializationException("Invalid output port number: "
+              + elem.getAttribute("fromOutputPortNum"), e);
+        }
+        
+        LogicComponent from = uuidToLC.get(uuid);
+        if (outputPortNum < 0 || outputPortNum >= from.getNumOutputs()) {
+          throw new DeserializationException("Output port number out of range: " + outputPortNum);
+        }
+        
+        connectTo(from.getOutput(outputPortNum));
+      }
     }
     
   }

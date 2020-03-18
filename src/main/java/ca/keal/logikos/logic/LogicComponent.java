@@ -1,8 +1,12 @@
 package ca.keal.logikos.logic;
 
+import ca.keal.logikos.util.DeserializationException;
+import ca.keal.logikos.util.XmlUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.IntFunction;
@@ -17,7 +21,7 @@ public abstract class LogicComponent {
   private final Port.Input[] inputs;
   private final Port.Output[] outputs;
   
-  private final UUID id = UUID.randomUUID();
+  private UUID id = UUID.randomUUID();
   
   /**
    * Initialize the LogicComponent with {@code numInputs} inputs {@link Port.Input}s and {@code numOutputs} output
@@ -99,6 +103,11 @@ public abstract class LogicComponent {
   
   protected abstract String getName();
   
+  /** To be used when deserializing. */
+  void setId(UUID id) {
+    this.id = id;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (obj == null || !getClass().equals(obj.getClass())) return false;
@@ -117,7 +126,7 @@ public abstract class LogicComponent {
   public Element toXml(Document doc) {
     Element elem = doc.createElement("logicComponent");
     elem.setAttribute("uuid", getId().toString());
-    elem.setAttribute("type", getName());
+    elem.setAttribute("type", getName()); // TODO use a separate field for serialization type than name
     
     // We only serialize the inputs because they're sufficient to rebuild all the connections
     for (Port.Input port : getInputs()) {
@@ -125,6 +134,66 @@ public abstract class LogicComponent {
     }
     
     return elem;
+  }
+  
+  /**
+   * Deserialize the XML element to a LogicComponent, but do not fill in ports yet. That must be done with a call
+   * to {@link #fillInPortsFromXml(Map, Element)} afterwards.
+   */
+  public static LogicComponent fromXml(Element elem) throws DeserializationException {
+    if (!elem.getTagName().equals("logicComponent")) {
+      throw new DeserializationException("Logic components must have tag <logicComponent>.");
+    }
+    if (!elem.hasAttribute("uuid") || !elem.hasAttribute("type")) {
+      throw new DeserializationException("Logic component elements must have 'uuid' and 'type' attributes.");
+    }
+
+    UUID uuid = UUID.fromString(elem.getAttribute("uuid"));
+    String type = elem.getAttribute("type");
+
+    // TODO store types in constants, y'know, like a responsible programmer, or even in a map, or something, please
+    LogicComponent lc;
+    switch (type) {
+      case "AND":
+        lc = new AndGate();
+        break;
+      case "OR":
+        lc = new OrGate();
+        break;
+      case "NOT":
+        lc = new NotGate();
+        break;
+      case "NAND":
+        lc = new NandGate();
+        break;
+      case "INPUT":
+        lc = new Input();
+        break;
+      case "OUTPUT":
+        lc = new Output();
+        break;
+      default:
+        // No UserGate at this time
+        throw new DeserializationException("Unrecognized logic component type: " + type);
+    }
+
+    lc.setId(uuid);
+    return lc;
+  }
+
+  /**
+   * Fill in the ports and connections from XML, using the map to connect to LogicComponents based on UUID.
+   */
+  public void fillInPortsFromXml(Map<UUID, LogicComponent> uuidToLC, Element elem) throws DeserializationException {
+    List<Element> portElements = XmlUtil.getDirectChildrenByTagName(elem, "inputPort");
+    if (portElements.size() != getNumInputs()) {
+      throw new DeserializationException("Wrong number of inputs specified to LogicComponent with name '" + getName()
+          + "': expected " + getNumInputs() + ", found " + portElements.size());
+    }
+    
+    for (int i = 0; i < getNumInputs(); i++) {
+      getInput(i).populateFromXml(uuidToLC, portElements.get(i));
+    }
   }
   
 }
