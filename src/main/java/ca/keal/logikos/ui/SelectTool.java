@@ -39,7 +39,7 @@ public class SelectTool extends Tool {
   
   @Override
   public void onKeyPress(KeyEvent e) {
-    if (e.getCode() == KeyCode.DELETE) {
+    if (selected != null && e.getCode() == KeyCode.DELETE) {
       selected.delete();
       deselect();
     }

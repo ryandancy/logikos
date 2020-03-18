@@ -1,6 +1,7 @@
 package ca.keal.logikos.ui;
 
 import ca.keal.logikos.field.Field;
+import ca.keal.logikos.util.DeserializationException;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -9,7 +10,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
+import javax.swing.text.html.parser.Parser;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,17 +54,17 @@ final class SaveUtil {
       field.setName(name);
     }
     
-    String filename = promptForFilename(stage);
+    String filename = promptForFilenameToSave(stage);
     if (filename == null) return;
     field.setFilename(filename);
     
     writeAndCheck(field);
   }
   
-  private static String promptForFilename(Stage stage) {
+  private static String promptForFilenameToSave(Stage stage) {
     FileChooser chooser = new FileChooser();
     chooser.setTitle("Save as...");
-    chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Logikos Files", ".lgk"));
+    chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Logikos Files", "*.lgk"));
     chooser.setInitialFileName("new-gate.lgk");
     File selected = chooser.showSaveDialog(stage);
     return selected == null ? null : selected.getAbsolutePath();
@@ -82,7 +85,7 @@ final class SaveUtil {
       write(field);
     } catch (IOException | ParserConfigurationException | TransformerException e) {
       e.printStackTrace();
-      Alert alert = new Alert(Alert.AlertType.ERROR, "An error occurred when saving.\n" + e.getMessage());
+      Alert alert = new Alert(Alert.AlertType.ERROR, "An error occurred while saving.\n" + e.getMessage());
       alert.show();
     }
   }
@@ -105,6 +108,41 @@ final class SaveUtil {
     transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // for now
     transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
     transformer.transform(new DOMSource(doc), new StreamResult(new FileOutputStream(field.getFilename())));
+  }
+
+  /**
+   * Open a field from a file and return the opened field.
+   */
+  static Field open(Stage stage) {
+    String filename = promptForFilenameToOpen(stage);
+    if (filename == null) return null;
+    
+    try {
+      Field field = parseField(filename);
+      field.setFilename(filename);
+      return field;
+    } catch (DeserializationException | ParserConfigurationException | SAXException | IOException e) {
+      e.printStackTrace();
+      Alert alert = new Alert(Alert.AlertType.ERROR, "An error occurred while opening.\n" + e.getMessage());
+      alert.show();
+      return null;
+    }
+  }
+  
+  private static String promptForFilenameToOpen(Stage stage) {
+    FileChooser chooser = new FileChooser();
+    chooser.setTitle("Open...");
+    chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Logikos Files", "*.lgk"));
+    File selected = chooser.showOpenDialog(stage);
+    return selected == null ? null : selected.getAbsolutePath();
+  }
+  
+  private static Field parseField(String filename) throws DeserializationException, ParserConfigurationException,
+      SAXException, IOException {
+    DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    Document doc = builder.parse(new File(filename));
+    Element root = doc.getDocumentElement();
+    return Field.fromXml(root);
   }
   
 }

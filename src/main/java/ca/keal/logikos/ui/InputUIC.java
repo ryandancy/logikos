@@ -12,6 +12,7 @@ public class InputUIC extends BooleanStateImageUIC {
     super(inputFC, isGhost);
   }
   
+  @Override
   protected String getImageFilenameBase() {
     InputFC.Type type = ((InputFC) getFieldComponent()).getType();
     switch (type) {

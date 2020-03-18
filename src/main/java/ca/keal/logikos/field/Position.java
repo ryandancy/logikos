@@ -57,16 +57,17 @@ public class Position {
       throw new DeserializationException("Positions must have tag <position>.");
     }
     
-    Element xElem = XmlUtil.getDirectChildByTagName(elem, "x");
-    Element yElem = XmlUtil.getDirectChildByTagName(elem, "y");
+    if (!elem.hasAttribute("x") || !elem.hasAttribute("y")) {
+      throw new DeserializationException("Position elements must have 'x' and 'y' attributes.");
+    }
     
     double x, y;
     try {
-      x = Double.parseDouble(xElem.getTextContent());
-      y = Double.parseDouble(yElem.getTextContent());
+      x = Double.parseDouble(elem.getAttribute("x"));
+      y = Double.parseDouble(elem.getAttribute("y"));
     } catch (NumberFormatException e) {
-      throw new DeserializationException("Illegal x or y number in position: x=" + xElem.getTextContent()
-          + ", y=" + yElem.getTextContent(), e);
+      throw new DeserializationException("Illegal x or y number in position: x = " + elem.getAttribute("x")
+          + ", y = " + elem.getAttribute("y"), e);
     }
     
     return new Position(x, y);

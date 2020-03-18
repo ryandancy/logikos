@@ -2,6 +2,9 @@ package ca.keal.logikos.ui;
 
 import ca.keal.logikos.field.OutputFC;
 
+/**
+ * A {@link UIComponent} representing an output specifically.
+ */
 // TODO selecting type
 public class OutputUIC extends BooleanStateImageUIC {
   

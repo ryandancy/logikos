@@ -10,6 +10,7 @@ import ca.keal.logikos.logic.NotGate;
 import ca.keal.logikos.logic.OrGate;
 import ca.keal.logikos.logic.Output;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
@@ -72,7 +73,7 @@ public class Logikos extends Application {
   
   // The first tool is initially selected
   private Tool selectedTool = ALL_TOOLS[0];
-  private final Field field = new Field(); // TODO saving & reloading
+  private Field field = new Field();
   
   public Logikos() {
     super();
@@ -95,7 +96,8 @@ public class Logikos extends Application {
     this.primaryStage = primaryStage;
     primaryStage.setTitle("Logikos");
     
-    // Add the save option
+    // Add the save and open options
+    // TODO keyboard shortcuts for these
     MenuBar menuBar = new MenuBar();
     menuBar.setUseSystemMenuBar(true);
     Menu file = new Menu("File");
@@ -103,7 +105,9 @@ public class Logikos extends Application {
     save.setOnAction(e -> SaveUtil.save(primaryStage, field));
     MenuItem saveAs = new MenuItem("Save as...");
     saveAs.setOnAction(e -> SaveUtil.saveAs(primaryStage, field));
-    file.getItems().addAll(save, saveAs);
+    MenuItem open = new MenuItem("Open...");
+    open.setOnAction(this::onOpen);
+    file.getItems().addAll(save, saveAs, open);
     menuBar.getMenus().add(file);
     
     // Set RootLayout as the scene
@@ -169,6 +173,17 @@ public class Logikos extends Application {
   // same, for scrolling
   private void onScroll(ScrollEvent e) {
     getSelectedTool().onScroll(e);
+  }
+  
+  // handle presses of the "open" menu item
+  private void onOpen(ActionEvent e) {
+    Field newField = SaveUtil.open(primaryStage);
+    if (newField == null) return;
+    
+    // TODO programmatically click "select" before regenerating
+    
+    getFieldPaneController().clearAndRegenerateField(newField);
+    this.field = newField;
   }
   
 }

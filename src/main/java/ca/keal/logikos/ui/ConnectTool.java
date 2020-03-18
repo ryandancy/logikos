@@ -84,20 +84,11 @@ public class ConnectTool extends Tool {
     output.getFieldComponent().getLogicComponent().getOutput(outputPort)
         .connectTo(input.getFieldComponent().getLogicComponent().getInput(inputPort));
     
-    // Get the coordinates of the center of the output node for placing the connection
-    Node outputNode = output.getOutputPorts()[outputPort];
-    Bounds outputBounds = fieldPane.sceneToLocal(outputNode.localToScene(outputNode.getBoundsInLocal()));
-    double outputCenterX = fieldPane.paneToRealX(outputBounds.getMinX() + Math.max(0, -fieldPane.getOffsetX()))
-        + (outputBounds.getWidth() / 2);
-    double outputCenterY = fieldPane.paneToRealY(outputBounds.getMinY() + Math.max(0, -fieldPane.getOffsetY()))
-        + (outputBounds.getHeight() / 2);
-    
     UIConnection connection = new UIConnection(output, outputPort, input, inputPort);
-    output.getOutputConnections(outputPort).add(connection);
-    input.getInputConnections()[inputPort] = connection;
+    output.addOutputConnection(outputPort, connection);
+    input.setInputConnection(inputPort, connection);
     
-    connection.setLayoutX(outputCenterX);
-    connection.setLayoutY(outputCenterY);
+    connection.moveToOutputNode(output.getOutputPorts()[outputPort]);
     fieldPane.getContentChildren().add(connection);
   }
   

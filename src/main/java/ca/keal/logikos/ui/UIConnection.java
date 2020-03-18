@@ -205,6 +205,21 @@ public class UIConnection extends Group implements Selectable {
     setToCenterRelativeCoords(relCoord.getX(), relCoord.getY());
   }
   
+  /** This must be called with the output node we're connecting to when constructing the UIConnection. */
+  public void moveToOutputNode(Node outputNode) {
+    PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
+    
+    // Get the coordinates of the center of the output node for placing the connection
+    Bounds outputBounds = fieldPane.sceneToLocal(outputNode.localToScene(outputNode.getBoundsInLocal()));
+    double outputCenterX = fieldPane.paneToRealX(outputBounds.getMinX() + Math.max(0, -fieldPane.getOffsetX()))
+        + (outputBounds.getWidth() / 2);
+    double outputCenterY = fieldPane.paneToRealY(outputBounds.getMinY() + Math.max(0, -fieldPane.getOffsetY()))
+        + (outputBounds.getHeight() / 2);
+    
+    setLayoutX(outputCenterX);
+    setLayoutY(outputCenterY);
+  }
+  
   public void setStateVisual(boolean on) {
     wire.setStroke(UIColors.onOrOff(on));
   }

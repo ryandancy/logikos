@@ -58,7 +58,7 @@ public class UIComponent extends Group implements Selectable {
     inputPorts = new Node[numInputs];
     outputPorts = new Node[numOutputs];
     inputConnections = new UIConnection[numInputs];
-    //noinspection unchecked
+    //noinspection unchecked,SuspiciousToArrayCall
     outputConnectionLists = (List<UIConnection>[]) Stream.generate(ArrayList::new)
         .limit(numOutputs)
         .toArray(List[]::new);

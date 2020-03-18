@@ -1,5 +1,11 @@
 package ca.keal.logikos.ui;
 
+import ca.keal.logikos.field.Field;
+import ca.keal.logikos.field.FieldComponent;
+import ca.keal.logikos.field.InputFC;
+import ca.keal.logikos.field.OutputFC;
+import ca.keal.logikos.logic.Connection;
+import ca.keal.logikos.logic.LogicComponent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -7,7 +13,11 @@ import javafx.scene.Parent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * The controller class for the FieldPane.
@@ -117,6 +127,56 @@ public class FieldPaneController {
   
   public PannablePane getFieldPane() {
     return fieldPane;
+  }
+
+  /**
+   * Remove all UIComponents from the field and regenerate them from the given Field. 
+   */
+  // TODO should this go here or be moved to Logikos or somewhere else?
+  public void clearAndRegenerateField(Field newField) {
+    // Delete all UIComponents - we get a list first so we don't modify the observable list while looping through it.
+    List<UIComponent> allUICs = fieldPane.getContentChildren().stream()
+        .filter(node -> node instanceof UIComponent)
+        .map(node -> (UIComponent) node)
+        .collect(Collectors.toList());
+    for (UIComponent uic : allUICs) {
+      uic.delete();
+    }
+    
+    // Regenerate UIComponents from the new field
+    Map<LogicComponent, UIComponent> lcToUIC = new HashMap<>();
+    for (FieldComponent fc : newField.getFieldComponents()) {
+      UIComponent newUIC;
+      if (fc instanceof InputFC) {
+        newUIC = new InputUIC((InputFC) fc, false);
+      } else if (fc instanceof OutputFC) {
+        newUIC = new OutputUIC((OutputFC) fc, false);
+      } else {
+        newUIC = new UIComponent(fc, fc.getLogicComponent().getName(), false);
+      }
+      newUIC.setLayoutX(fc.getPosition().getX());
+      newUIC.setLayoutY(fc.getPosition().getY());
+      fieldPane.getContentChildren().add(newUIC);
+      lcToUIC.put(fc.getLogicComponent(), newUIC);
+    }
+    
+    // Regenerate all the UIConnections
+    for (FieldComponent fc : newField.getFieldComponents()) {
+      LogicComponent lc = fc.getLogicComponent();
+      for (int input = 0; input < lc.getNumInputs(); input++) {
+        Connection connection = lc.getInput(input).getConnection();
+        if (connection != null) {
+          int output = connection.getOutput().getPortNumber();
+          UIComponent fromUIC = lcToUIC.get(connection.getOutput().getComponent());
+          UIComponent toUIC = lcToUIC.get(lc);
+          UIConnection uiConnection = new UIConnection(fromUIC, output, toUIC, input);
+          fromUIC.addOutputConnection(output, uiConnection);
+          toUIC.setInputConnection(input, uiConnection);
+          uiConnection.moveToOutputNode(fromUIC.getOutputPorts()[output]);
+          fieldPane.getContentChildren().add(uiConnection);
+        }
+      }
+    }
   }
   
 }

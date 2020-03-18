@@ -101,7 +101,7 @@ public abstract class LogicComponent {
     return getName() + "[id=" + getId() + "]";
   }
   
-  protected abstract String getName();
+  public abstract String getName();
   
   /** To be used when deserializing. */
   void setId(UUID id) {

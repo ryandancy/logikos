@@ -31,7 +31,7 @@ public class PlaceComponentTool extends Tool {
   
   public PlaceComponentTool(String name, String tooltip, Supplier<LogicComponent> componentSupplier) {
     this(name, tooltip, position -> new FieldComponent(componentSupplier.get(), position),
-        (fc, isGhost) -> new UIComponent(fc, name, isGhost));
+        (fc, isGhost) -> new UIComponent(fc, fc.getLogicComponent().getName(), isGhost));
   }
   
   protected PlaceComponentTool(String name, String tooltip, Function<Position, FieldComponent> fcMaker,

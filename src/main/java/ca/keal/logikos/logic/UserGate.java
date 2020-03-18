@@ -62,8 +62,8 @@ public class UserGate extends Gate {
   }
   
   @Override
-  protected String getName() {
-    return "UserGate('" + getUserGateName() + "')";
+  public String getName() {
+    return getUserGateName();
   }
   
 }
