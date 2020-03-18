@@ -13,14 +13,10 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -65,9 +61,13 @@ public class Logikos extends Application {
   };
   
   // These are loaded after this class is set as the controller for the RootLayout
-  @FXML @SuppressWarnings("unused") private ToolPaneController toolPaneController;
-  @FXML @SuppressWarnings("unused") private FieldPaneController fieldPaneController;
-  @FXML @SuppressWarnings("unused") private EvaluationBoxController evaluationBoxController;
+  @FXML private ToolPaneController toolPaneController;
+  @FXML private FieldPaneController fieldPaneController;
+  @FXML private EvaluationBoxController evaluationBoxController;
+  
+  @FXML private MenuItem saveItem;
+  @FXML private MenuItem saveAsItem;
+  @FXML private MenuItem openItem;
   
   private Stage primaryStage;
   
@@ -96,29 +96,12 @@ public class Logikos extends Application {
     this.primaryStage = primaryStage;
     primaryStage.setTitle("Logikos");
     
-    // Add the save and open options
-    // TODO keyboard shortcuts for these
-    MenuBar menuBar = new MenuBar();
-    menuBar.setUseSystemMenuBar(true);
-    Menu file = new Menu("File");
-    MenuItem save = new MenuItem("Save");
-    save.setOnAction(e -> SaveUtil.save(primaryStage, field));
-    MenuItem saveAs = new MenuItem("Save as...");
-    saveAs.setOnAction(e -> SaveUtil.saveAs(primaryStage, field));
-    MenuItem open = new MenuItem("Open...");
-    open.setOnAction(this::onOpen);
-    file.getItems().addAll(save, saveAs, open);
-    menuBar.getMenus().add(file);
-    
     // Set RootLayout as the scene
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("RootLayout.fxml"));
       loader.setController(this);
       
-      BorderPane borderPane = loader.load();
-      borderPane.setTop(menuBar);
-      
-      primaryStage.setScene(new Scene(borderPane));
+      primaryStage.setScene(new Scene(loader.load()));
       
       // Handle key presses + scrolling globally
       primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyPress);
@@ -132,6 +115,14 @@ public class Logikos extends Application {
     
     // Tell the first tool that it's been selected
     getSelectedTool().onSelect();
+  }
+  
+  @FXML
+  private void initialize() {
+    // set up the menu item actions
+    saveItem.setOnAction(e -> SaveUtil.save(getPrimaryStage(), getField()));
+    saveAsItem.setOnAction(e -> SaveUtil.saveAs(getPrimaryStage(), getField()));
+    openItem.setOnAction(this::onOpen);
   }
   
   public Stage getPrimaryStage() {
