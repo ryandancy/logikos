@@ -2,7 +2,11 @@ package ca.keal.logikos.logic;
 
 import ca.keal.logikos.field.Field;
 import ca.keal.logikos.field.InputFC;
+import ca.keal.logikos.util.DeserializationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -19,12 +23,11 @@ public class UserGate extends Gate {
    * Create a {@link UserGate} based on the given {@link Field}. The new {@code UserGate} is functionally identical to
    * the {@code Field} when run.
    * @param field The {@link Field} on which to base this {@code UserGate}.
-   * @param name The name of the new {@code UserGate}.
    */
-  protected UserGate(Field field, String name) {
+  protected UserGate(Field field) {
     super(field.getInputFCs().size(), field.getOutputFCs().size());
     setField(field);
-    setUserGateName(name);
+    setUserGateName(field.getName());
   }
   
   public void setField(Field field) {
@@ -64,6 +67,32 @@ public class UserGate extends Gate {
   @Override
   public String getName() {
     return getUserGateName();
+  }
+  
+  @Override
+  public Element toXml(Document doc) {
+    // Overwrite the type and add the filename
+    Element elem = super.toXml(doc);
+    elem.setAttribute("type", "USER");
+    elem.setAttribute("filename", field.getFilename());
+    return elem;
+  }
+  
+  public static UserGate fromXml(Element elem) throws DeserializationException {
+    if (!elem.hasAttribute("filename")) {
+      throw new DeserializationException("User gate elements must have the 'filename' attribute.");
+    }
+    
+    // Attempt to recover the field from the filename
+    String filename = elem.getAttribute("filename");
+    Field userField;
+    try {
+      userField = Field.fromXml(filename);
+    } catch (IOException e) {
+      throw new DeserializationException("Error while trying to read file '" + filename + "'", e);
+    }
+    
+    return new UserGate(userField);
   }
   
 }

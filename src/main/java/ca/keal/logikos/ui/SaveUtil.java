@@ -118,10 +118,10 @@ final class SaveUtil {
     if (filename == null) return null;
     
     try {
-      Field field = parseField(filename);
+      Field field = Field.fromXml(filename);
       field.setFilename(filename);
       return field;
-    } catch (DeserializationException | ParserConfigurationException | SAXException | IOException e) {
+    } catch (DeserializationException | IOException e) {
       e.printStackTrace();
       Alert alert = new Alert(Alert.AlertType.ERROR, "An error occurred while opening.\n" + e.getMessage());
       alert.show();
@@ -135,14 +135,6 @@ final class SaveUtil {
     chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Logikos Files", "*.lgk"));
     File selected = chooser.showOpenDialog(stage);
     return selected == null ? null : selected.getAbsolutePath();
-  }
-  
-  private static Field parseField(String filename) throws DeserializationException, ParserConfigurationException,
-      SAXException, IOException {
-    DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-    Document doc = builder.parse(new File(filename));
-    Element root = doc.getDocumentElement();
-    return Field.fromXml(root);
   }
   
 }

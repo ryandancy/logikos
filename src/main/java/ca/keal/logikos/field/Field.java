@@ -6,7 +6,14 @@ import ca.keal.logikos.util.DeserializationException;
 import ca.keal.logikos.util.XmlUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -144,6 +151,25 @@ public class Field {
     }
     
     return field;
+  }
+  
+  public static Field fromXml(String filename) throws DeserializationException, IOException {
+    try {
+      DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+      Document doc = builder.parse(new File(filename));
+      Element root = doc.getDocumentElement();
+      
+      Field field = fromXml(root);
+      field.setFilename(filename);
+      return field;
+    } catch (ParserConfigurationException e) {
+      // shouldn't happen
+      throw new RuntimeException(e);
+    } catch (SAXException e) {
+      throw new DeserializationException("Error reading XML", e);
+    } catch (FileNotFoundException e) {
+      throw new DeserializationException("Could not find file '" + filename + "'", e);
+    }
   }
   
 }
