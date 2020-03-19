@@ -17,6 +17,9 @@
         <MenuItem text="Save as..." accelerator="Shortcut+Shift+S" fx:id="saveAsItem" />
         <MenuItem text="Open..." accelerator="Shortcut+O" fx:id="openItem" />
       </Menu>
+      <Menu text="Gate">
+        <MenuItem text="Import gate..." accelerator="Shortcut+G" fx:id="addUserGateItem" />
+      </Menu>
     </MenuBar>
   </top>
   

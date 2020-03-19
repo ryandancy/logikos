@@ -13,7 +13,7 @@ public class EvaluationBoxController {
   
   @FXML
   public void initialize() {
-    for (Tool tool : Logikos.ALL_TOOLS) {
+    for (Tool tool : Logikos.DEFAULT_TOOLS) {
       if (tool.getLocation() != Tool.Location.EVALUATION_BOX) continue;
       evaluationBox.getChildren().add(tool.createRadioButton());
     }

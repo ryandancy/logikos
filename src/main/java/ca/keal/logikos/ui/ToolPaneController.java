@@ -12,10 +12,14 @@ public class ToolPaneController {
   
   @FXML
   public void initialize() {
-    for (Tool tool : Logikos.ALL_TOOLS) {
+    for (Tool tool : Logikos.DEFAULT_TOOLS) {
       if (tool.getLocation() != Tool.Location.TOOL_PANE) continue;
       toolPane.getChildren().add(tool.createRadioButton());
     }
+  }
+  
+  public void addTool(Tool tool) {
+    toolPane.getChildren().add(tool.createRadioButton());
   }
   
 }

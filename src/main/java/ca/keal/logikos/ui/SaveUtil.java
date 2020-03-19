@@ -129,7 +129,7 @@ final class SaveUtil {
     }
   }
   
-  private static String promptForFilenameToOpen(Stage stage) {
+  static String promptForFilenameToOpen(Stage stage) {
     FileChooser chooser = new FileChooser();
     chooser.setTitle("Open...");
     chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Logikos Files", "*.lgk"));

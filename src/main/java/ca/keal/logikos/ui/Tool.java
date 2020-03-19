@@ -12,7 +12,7 @@ import javafx.scene.input.ScrollEvent;
  * Represents a tool, which appears in the ToolPane and can be clicked on by the user and used to interact with the
  * field.
  * 
- * Tools in {@link Logikos#ALL_TOOLS} are added to the ToolPane at startup.
+ * Tools in {@link Logikos#DEFAULT_TOOLS} are added to the ToolPane at startup.
  * 
  * There are several hooks that subclasses may override. When the user clicks on the tool, {@link #onSelect()} is run;
  * when they click on another tool, {@link #onDeselect()} is run. When the user, with this tool selected, hovers over a
@@ -98,7 +98,7 @@ public abstract class Tool {
     btn.setToggleGroup(GLOBAL_TOGGLE_GROUP);
     btn.disableProperty().bind(enabledProperty().not());
     
-    if (this == Logikos.ALL_TOOLS[0]) {
+    if (this == Logikos.DEFAULT_TOOLS[0]) {
       // Make the first tool selected for real (i.e. with a dot in the radio button)
       btn.fire();
     }

@@ -75,6 +75,7 @@ public class PlaceComponentTool extends Tool {
     double realY = fieldPane.paneToRealY(position.getPaneY());
     
     FieldComponent newFC = fcMaker.apply(new Position(realX, realY));
+    if (newFC == null) return;
     Logikos.getInstance().getField().addFieldComponent(newFC);
     
     UIComponent newUIC = uicMaker.apply(newFC, false);

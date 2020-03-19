@@ -9,11 +9,13 @@ import ca.keal.logikos.logic.NandGate;
 import ca.keal.logikos.logic.NotGate;
 import ca.keal.logikos.logic.OrGate;
 import ca.keal.logikos.logic.Output;
+import ca.keal.logikos.util.DeserializationException;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
@@ -40,7 +42,7 @@ public class Logikos extends Application {
   }
   
   // TODO more tools
-  public static final Tool[] ALL_TOOLS = {
+  public static final Tool[] DEFAULT_TOOLS = {
       new SelectTool(),
       new ConnectTool(),
       new PlaceTypedComponentTool<>("Input", "Add an input",
@@ -68,11 +70,12 @@ public class Logikos extends Application {
   @FXML private MenuItem saveItem;
   @FXML private MenuItem saveAsItem;
   @FXML private MenuItem openItem;
+  @FXML private MenuItem addUserGateItem;
   
   private Stage primaryStage;
   
   // The first tool is initially selected
-  private Tool selectedTool = ALL_TOOLS[0];
+  private Tool selectedTool = DEFAULT_TOOLS[0];
   private Field field = new Field();
   
   public Logikos() {
@@ -123,6 +126,7 @@ public class Logikos extends Application {
     saveItem.setOnAction(e -> SaveUtil.save(getPrimaryStage(), getField()));
     saveAsItem.setOnAction(e -> SaveUtil.saveAs(getPrimaryStage(), getField()));
     openItem.setOnAction(this::onOpen);
+    addUserGateItem.setOnAction(this::onAddUserGate);
   }
   
   public Stage getPrimaryStage() {
@@ -167,7 +171,7 @@ public class Logikos extends Application {
   }
   
   // handle presses of the "open" menu item
-  private void onOpen(ActionEvent e) {
+  private void onOpen(ActionEvent event) {
     Field newField = SaveUtil.open(primaryStage);
     if (newField == null) return;
     
@@ -175,6 +179,25 @@ public class Logikos extends Application {
     
     getFieldPaneController().clearAndRegenerateField(newField);
     this.field = newField;
+  }
+  
+  // handle presses of the "add user gate" menu item
+  private void onAddUserGate(ActionEvent event) {
+    String filename = SaveUtil.promptForFilenameToOpen(getPrimaryStage());
+    
+    // parse the field from the file here so that the user gets an alert fast if parsing fails
+    // as a bonus, we get the gate name here
+    
+    Field userField;
+    try {
+      userField = Field.fromXml(filename);
+    } catch (IOException | DeserializationException e) {
+      Alert alert = new Alert(Alert.AlertType.ERROR, "Error importing gate: " + e.getMessage());
+      alert.show();
+      return;
+    }
+    
+    getToolPaneController().addTool(new PlaceUserGateTool(userField.getName(), filename));
   }
   
 }

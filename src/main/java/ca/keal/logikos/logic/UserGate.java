@@ -24,7 +24,7 @@ public class UserGate extends Gate {
    * the {@code Field} when run.
    * @param field The {@link Field} on which to base this {@code UserGate}.
    */
-  protected UserGate(Field field) {
+  public UserGate(Field field) {
     super(field.getInputFCs().size(), field.getOutputFCs().size());
     setField(field);
     setUserGateName(field.getName());
