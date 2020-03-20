@@ -90,6 +90,9 @@ public class ConnectTool extends Tool {
     
     connection.moveToOutputNode(output.getOutputPorts()[outputPort]);
     fieldPane.getContentChildren().add(connection);
+    
+    Logikos.getInstance().getField().setModified(true);
+    Logikos.getInstance().getWindowTitleManager().update();
   }
   
   private boolean isValidConnection(MousePosition position) {

@@ -37,6 +37,8 @@ public class Field {
   private String filename = null;
   private String name = null;
   
+  private boolean modified = false;
+  
   public List<FieldComponent> getFieldComponents() {
     return Collections.unmodifiableList(fieldComponents);
   }
@@ -61,15 +63,20 @@ public class Field {
     } else if (component instanceof OutputFC) {
       outputFCs.add((OutputFC) component);
     }
+    
+    setModified(true);
   }
   
   public void removeFieldComponent(FieldComponent component) {
     fieldComponents.remove(component);
+    
     if (component instanceof InputFC) {
       inputFCs.remove(component);
     } else if (component instanceof OutputFC) {
       outputFCs.remove(component);
     }
+    
+    setModified(true);
   }
   
   public String getFilename() {
@@ -86,6 +93,14 @@ public class Field {
   
   public void setName(String name) {
     this.name = name;
+  }
+  
+  public boolean isModified() {
+    return modified;
+  }
+  
+  public void setModified(boolean modified) {
+    this.modified = modified;
   }
   
   /**

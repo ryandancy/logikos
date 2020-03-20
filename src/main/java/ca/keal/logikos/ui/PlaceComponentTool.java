@@ -82,6 +82,8 @@ public class PlaceComponentTool extends Tool {
     newUIC.setLayoutX(realX);
     newUIC.setLayoutY(realY);
     fieldPane.getContentChildren().add(newUIC);
+    
+    Logikos.getInstance().getWindowTitleManager().update();
   }
   
   private boolean doesGhostIntersectAnything() {

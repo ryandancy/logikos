@@ -108,6 +108,9 @@ final class SaveUtil {
     transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // for now
     transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
     transformer.transform(new DOMSource(doc), new StreamResult(new FileOutputStream(field.getFilename())));
+    
+    // the field is no longer modified since it's been written to
+    field.setModified(false);
   }
 
   /**

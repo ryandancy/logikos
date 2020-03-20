@@ -63,6 +63,8 @@ public class Logikos extends Application {
   @FXML private FieldPaneController fieldPaneController;
   @FXML private EvaluationBoxController evaluationBoxController;
   
+  private WindowTitleManager windowTitleManager;
+  
   private Stage primaryStage;
   
   // The first tool is initially selected
@@ -88,7 +90,7 @@ public class Logikos extends Application {
   public void start(Stage primaryStage) {
     // TODO update this with save status - SavingManager as util class?
     this.primaryStage = primaryStage;
-    primaryStage.setTitle("Logikos");
+    windowTitleManager = new WindowTitleManager(primaryStage);
     
     // Set RootLayout as the scene
     try {
@@ -144,6 +146,10 @@ public class Logikos extends Application {
   
   public EvaluationBoxController getEvaluationBoxController() {
     return evaluationBoxController;
+  }
+  
+  public WindowTitleManager getWindowTitleManager() {
+    return windowTitleManager;
   }
   
   // handle global key presses (just delegate to the selected tool)

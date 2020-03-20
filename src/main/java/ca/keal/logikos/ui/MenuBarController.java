@@ -13,9 +13,11 @@ public class MenuBarController {
   @FXML
   private void onNewItemPress(ActionEvent e) {
     // TODO programmatically click "select"
+    // TODO prompt to save if modified
     Field newField = new Field();
     Logikos.getInstance().getFieldPaneController().clearAndRegenerateField(newField);
     Logikos.getInstance().setField(newField);
+    Logikos.getInstance().getWindowTitleManager().update();
   }
   
   @FXML
@@ -27,16 +29,19 @@ public class MenuBarController {
     
     Logikos.getInstance().getFieldPaneController().clearAndRegenerateField(newField);
     Logikos.getInstance().setField(newField);
+    Logikos.getInstance().getWindowTitleManager().update();
   }
   
   @FXML
   private void onSaveItemPress(ActionEvent e) {
     SaveUtil.save(Logikos.getInstance().getPrimaryStage(), Logikos.getInstance().getField());
+    Logikos.getInstance().getWindowTitleManager().update();
   }
   
   @FXML
   private void onSaveAsItemPress(ActionEvent e) {
     SaveUtil.saveAs(Logikos.getInstance().getPrimaryStage(), Logikos.getInstance().getField());
+    Logikos.getInstance().getWindowTitleManager().update();
   }
   
   @FXML

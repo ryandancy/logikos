@@ -42,6 +42,7 @@ public class SelectTool extends Tool {
     if (selected != null && e.getCode() == KeyCode.DELETE) {
       selected.delete();
       deselect();
+      Logikos.getInstance().getWindowTitleManager().update();
     }
   }
   
