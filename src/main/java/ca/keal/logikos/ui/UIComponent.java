@@ -3,6 +3,7 @@ package ca.keal.logikos.ui;
 import ca.keal.logikos.field.FieldComponent;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -10,6 +11,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +32,12 @@ public class UIComponent extends Group implements Selectable {
   private static final double MIN_PORT_PADDING = 6.0;
   private static final double MIN_NAME_PADDING = 12.0;
   private static final double PORT_RADIUS = 5.0;
+  private static final double PORT_NAME_OFFSET = 7.5;
   
   private static final DropShadow SELECTED_DROP_SHADOW = new DropShadow(20.0, UIColors.FOREGROUND_COLOR);
   
   private static final Font NAME_FONT = new Font("sans-serif", 15);
+  private static final Font PORT_NAME_FONT = new Font("sans-serif", 12);
   
   private final FieldComponent fieldComponent;
   
@@ -145,17 +149,36 @@ public class UIComponent extends Group implements Selectable {
   
   protected void addPortCircles(boolean left, Node[] portArr, Color fgColor, double squareSize, double squareCoord) {
     // The circles are a set distance PORT_SPACING apart and are centred on each side of the rectangle
-    // TODO fill in these circles when connected
     double x = left ? squareCoord : -squareCoord; // note: squareCoord is negative
     double startY = ((squareSize - ((portArr.length - 1) * PORT_SPACING)) / 2) + squareCoord;
+    
     for (int i = 0; i < portArr.length; i++) {
+      double y = startY + (i * PORT_SPACING);
+      
       Circle port = new Circle(PORT_RADIUS);
       port.setStroke(fgColor);
       port.setFill(UIColors.BACKGROUND_COLOR);
       port.setCenterX(x);
-      port.setCenterY(startY + (i * PORT_SPACING));
+      port.setCenterY(y);
       portArr[i] = port;
-      getChildren().add(port);
+      
+      // compute the width/height of the port name and add it to the side of the port
+      // why does Text compute it but Label doesn't? who knows?
+      String portNameText = getFieldComponent().getPortNameByIndex(left, i);
+      Text text = new Text(portNameText);
+      text.setFont(PORT_NAME_FONT);
+      double portNameWidth = text.getBoundsInLocal().getWidth();
+      double portNameHeight = text.getBoundsInLocal().getHeight();
+      
+      Label portName = new Label(portNameText);
+      portName.setFont(PORT_NAME_FONT);
+      portName.setTextFill(fgColor);
+      portName.setTextAlignment(left ? TextAlignment.RIGHT : TextAlignment.LEFT);
+      portName.setPrefWidth(-1);
+      portName.setLayoutX(left ? x - PORT_NAME_OFFSET - portNameWidth : x + PORT_NAME_OFFSET);
+      portName.setLayoutY(y - portNameHeight * 0.6);
+      
+      getChildren().addAll(port, portName);
     }
   }
   

@@ -25,7 +25,7 @@ public class PannablePane extends Pane {
   private static final double GRID_SIZE = 30.0;
   private static final double GRID_THICKNESS_PX = 1;
   private static final double GRID_THICKNESS_REL = GRID_THICKNESS_PX / GRID_SIZE;
-  private static final Color GRID_COLOR = Color.gray(0.4);
+  private static final Color GRID_COLOR = Color.gray(0.65);
   
   private Pane content = new Pane();
   

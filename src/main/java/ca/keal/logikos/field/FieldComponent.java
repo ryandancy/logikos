@@ -40,6 +40,20 @@ public class FieldComponent {
   public void setPosition(Position position) {
     this.position = position;
   }
+
+  /**
+   * Return the name of the index'th port. If {@code input} is {@code true}, then return the name of the index'th
+   * input port; else, return the name of the index'th output port.
+   */
+  public String getPortNameByIndex(boolean input, int index) {
+    int numPorts = input ? getLogicComponent().getNumInputs() : getLogicComponent().getNumOutputs();
+    if (index < 0 || index >= numPorts) {
+      throw new IllegalArgumentException("Cannot get port name of index " + index + ", max is " + numPorts);
+    }
+    
+    // by default, return the index'th letter, unless there's only one of this type, in which case return nothing
+    return numPorts == 1 ? "" : String.valueOf((char) (index + 'a'));
+  }
   
   @Override
   public boolean equals(Object obj) {
@@ -57,7 +71,7 @@ public class FieldComponent {
   public String toString() {
     return "FieldComponent[logicComponent=" + logicComponent + ", position=" + position + "]";
   }
-
+  
   /**
    * Serialize this FieldComponent to XML.
    */
@@ -67,7 +81,7 @@ public class FieldComponent {
     elem.appendChild(getLogicComponent().toXml(doc));
     return elem;
   }
-
+  
   /**
    * Partially deserialize XML returned by {@link #toXml(Document)} into a {@link FieldComponent}.
    * {@link #fillInPortsFromXml(Map, Element)} must be called afterwards with a map of all UUIDs to FieldComponents.
