@@ -9,14 +9,10 @@ import ca.keal.logikos.logic.NandGate;
 import ca.keal.logikos.logic.NotGate;
 import ca.keal.logikos.logic.OrGate;
 import ca.keal.logikos.logic.Output;
-import ca.keal.logikos.util.DeserializationException;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.stage.Stage;
@@ -66,12 +62,6 @@ public class Logikos extends Application {
   @FXML private ToolPaneController toolPaneController;
   @FXML private FieldPaneController fieldPaneController;
   @FXML private EvaluationBoxController evaluationBoxController;
-
-  @FXML private MenuItem newItem;
-  @FXML private MenuItem saveItem;
-  @FXML private MenuItem saveAsItem;
-  @FXML private MenuItem openItem;
-  @FXML private MenuItem addUserGateItem;
   
   private Stage primaryStage;
   
@@ -121,16 +111,6 @@ public class Logikos extends Application {
     getSelectedTool().onSelect();
   }
   
-  @FXML
-  private void initialize() {
-    // set up the menu item actions
-    newItem.setOnAction(this::onNew);
-    saveItem.setOnAction(e -> SaveUtil.save(getPrimaryStage(), getField()));
-    saveAsItem.setOnAction(e -> SaveUtil.saveAs(getPrimaryStage(), getField()));
-    openItem.setOnAction(this::onOpen);
-    addUserGateItem.setOnAction(this::onAddUserGate);
-  }
-  
   public Stage getPrimaryStage() {
     return primaryStage;
   }
@@ -148,6 +128,10 @@ public class Logikos extends Application {
   
   public Field getField() {
     return field;
+  }
+  
+  public void setField(Field field) {
+    this.field = field;
   }
   
   public FieldPaneController getFieldPaneController() {
@@ -170,44 +154,6 @@ public class Logikos extends Application {
   // same, for scrolling
   private void onScroll(ScrollEvent e) {
     getSelectedTool().onScroll(e);
-  }
-  
-  // handle presses of the "new" menu item
-  private void onNew(ActionEvent event) {
-    // TODO programmatically click "select"
-    Field newField = new Field();
-    getFieldPaneController().clearAndRegenerateField(newField);
-    this.field = newField;
-  }
-  
-  // handle presses of the "open" menu item
-  private void onOpen(ActionEvent event) {
-    Field newField = SaveUtil.open(primaryStage);
-    if (newField == null) return;
-    
-    // TODO programmatically click "select" before regenerating
-    
-    getFieldPaneController().clearAndRegenerateField(newField);
-    this.field = newField;
-  }
-  
-  // handle presses of the "add user gate" menu item
-  private void onAddUserGate(ActionEvent event) {
-    String filename = SaveUtil.promptForFilenameToOpen(getPrimaryStage());
-    
-    // parse the field from the file here so that the user gets an alert fast if parsing fails
-    // as a bonus, we get the gate name here
-    
-    Field userField;
-    try {
-      userField = Field.fromXml(filename);
-    } catch (IOException | DeserializationException e) {
-      Alert alert = new Alert(Alert.AlertType.ERROR, "Error importing gate: " + e.getMessage());
-      alert.show();
-      return;
-    }
-    
-    getToolPaneController().addTool(new PlaceUserGateTool(userField.getName(), filename));
   }
   
 }

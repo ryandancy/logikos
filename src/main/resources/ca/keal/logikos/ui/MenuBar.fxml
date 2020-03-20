@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+
+<MenuBar xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml"
+         fx:controller="ca.keal.logikos.ui.MenuBarController"
+         useSystemMenuBar="true">
+    <Menu text="File">
+        <MenuItem text="New" accelerator="Shortcut+N" onAction="#onNewItemPress" />
+        <MenuItem text="Save" accelerator="Shortcut+S" onAction="#onSaveItemPress" />
+        <MenuItem text="Save as..." accelerator="Shortcut+Shift+S" onAction="#onSaveAsItemPress" />
+        <MenuItem text="Open..." accelerator="Shortcut+O" onAction="#onOpenItemPress" />
+    </Menu>
+    <Menu text="Gate">
+        <MenuItem text="Import gate..." accelerator="Shortcut+G" onAction="#onAddUserGateItemPress" />
+    </Menu>
+</MenuBar>
