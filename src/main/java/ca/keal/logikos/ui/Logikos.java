@@ -66,7 +66,8 @@ public class Logikos extends Application {
   @FXML private ToolPaneController toolPaneController;
   @FXML private FieldPaneController fieldPaneController;
   @FXML private EvaluationBoxController evaluationBoxController;
-  
+
+  @FXML private MenuItem newItem;
   @FXML private MenuItem saveItem;
   @FXML private MenuItem saveAsItem;
   @FXML private MenuItem openItem;
@@ -123,6 +124,7 @@ public class Logikos extends Application {
   @FXML
   private void initialize() {
     // set up the menu item actions
+    newItem.setOnAction(this::onNew);
     saveItem.setOnAction(e -> SaveUtil.save(getPrimaryStage(), getField()));
     saveAsItem.setOnAction(e -> SaveUtil.saveAs(getPrimaryStage(), getField()));
     openItem.setOnAction(this::onOpen);
@@ -168,6 +170,14 @@ public class Logikos extends Application {
   // same, for scrolling
   private void onScroll(ScrollEvent e) {
     getSelectedTool().onScroll(e);
+  }
+  
+  // handle presses of the "new" menu item
+  private void onNew(ActionEvent event) {
+    // TODO programmatically click "select"
+    Field newField = new Field();
+    getFieldPaneController().clearAndRegenerateField(newField);
+    this.field = newField;
   }
   
   // handle presses of the "open" menu item

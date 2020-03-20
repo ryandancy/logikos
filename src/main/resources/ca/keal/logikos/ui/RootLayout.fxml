@@ -13,6 +13,7 @@
   <top>
     <MenuBar useSystemMenuBar="true">
       <Menu text="File">
+        <MenuItem text="New" accelerator="Shortcut+N" fx:id="newItem" />
         <MenuItem text="Save" accelerator="Shortcut+S" fx:id="saveItem" />
         <MenuItem text="Save as..." accelerator="Shortcut+Shift+S" fx:id="saveAsItem" />
         <MenuItem text="Open..." accelerator="Shortcut+O" fx:id="openItem" />
