@@ -70,6 +70,21 @@ public class UserGate extends Gate {
   }
   
   @Override
+  public String getPortNameByIndex(boolean input, int index) {
+    // retrieve from the field
+    int numPorts = input ? getNumInputs() : getNumOutputs();
+    if (index < 0 || index >= numPorts) {
+      throw new IllegalArgumentException("Cannot get port name of index " + index + ", max is " + numPorts);
+    }
+    
+    if (input) {
+      return getField().getInputFCs().get(index).getLabel();
+    } else {
+      return getField().getOutputFCs().get(index).getLabel();
+    }
+  }
+  
+  @Override
   public Element toXml(Document doc) {
     // Overwrite the type and add the filename
     Element elem = super.toXml(doc);

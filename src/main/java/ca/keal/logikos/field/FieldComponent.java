@@ -46,13 +46,7 @@ public class FieldComponent {
    * input port; else, return the name of the index'th output port.
    */
   public String getPortNameByIndex(boolean input, int index) {
-    int numPorts = input ? getLogicComponent().getNumInputs() : getLogicComponent().getNumOutputs();
-    if (index < 0 || index >= numPorts) {
-      throw new IllegalArgumentException("Cannot get port name of index " + index + ", max is " + numPorts);
-    }
-    
-    // by default, return the index'th letter, unless there's only one of this type, in which case return nothing
-    return numPorts == 1 ? "" : String.valueOf((char) (index + 'a'));
+    return getLogicComponent().getPortNameByIndex(input, index);
   }
   
   @Override

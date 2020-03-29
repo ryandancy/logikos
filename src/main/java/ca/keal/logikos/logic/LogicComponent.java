@@ -72,6 +72,16 @@ public abstract class LogicComponent {
     return outputs;
   }
   
+  public String getPortNameByIndex(boolean input, int index) {
+    int numPorts = input ? getNumInputs() : getNumOutputs();
+    if (index < 0 || index >= numPorts) {
+      throw new IllegalArgumentException("Cannot get port name of index " + index + ", max is " + numPorts);
+    }
+
+    // by default, return the index'th letter, unless there's only one of this type, in which case return nothing
+    return numPorts == 1 ? "" : String.valueOf((char) (index + 'a'));
+  }
+  
   /**
    * Find the output values for this LogicComponent.
    * @param listener An {@link EvaluationListener} to be called on each successful evaluation. This may be {@code null}
