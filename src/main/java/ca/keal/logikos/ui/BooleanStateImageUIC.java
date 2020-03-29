@@ -1,6 +1,6 @@
 package ca.keal.logikos.ui;
 
-import ca.keal.logikos.field.FieldComponent;
+import ca.keal.logikos.field.OptionFC;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.effect.ColorAdjust;
@@ -12,13 +12,13 @@ import javafx.scene.paint.Color;
  * An abstract {@link UIComponent} subclass which represents a {@code UIComponent} that can be either on or off, and is
  * represented as such by an image - i.e., an input or output.
  */
-public abstract class BooleanStateImageUIC extends UIComponent {
+public abstract class BooleanStateImageUIC extends OptionUIC {
   
   private static final double FIT_WIDTH = 60.0;
   
   private ImageView img;
   
-  protected BooleanStateImageUIC(FieldComponent fc, boolean isGhost) {
+  protected BooleanStateImageUIC(OptionFC fc, boolean isGhost) {
     super(fc, "", isGhost);
   }
   

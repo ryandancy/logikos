@@ -12,7 +12,7 @@ import org.w3c.dom.Element;
  * input is a button, a switch, or something else; the key binding is a key code which is bound to this input, and a
  * negative key binding (the default) means that no key is bound to this component.
  */
-public class InputFC extends FieldComponent {
+public class InputFC extends LabelledFC {
   
   private Type type;
   private int keyBinding = -1;

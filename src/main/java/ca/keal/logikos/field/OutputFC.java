@@ -10,7 +10,7 @@ import org.w3c.dom.Element;
  * A {@link FieldComponent} representing specifically an output on the {@link Field}. It encapsulates a {@link Output}
  * and has a {@link OutputFC.Type}, which represents what type of output (e.g. a lamp or a binary "1"/"0") it is.
  */
-public class OutputFC extends FieldComponent {
+public class OutputFC extends LabelledFC {
   
   private Type type;
   
