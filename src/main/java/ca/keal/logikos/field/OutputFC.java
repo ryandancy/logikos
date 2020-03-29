@@ -70,7 +70,9 @@ public class OutputFC extends LabelledFC {
       throw new DeserializationException("Unknown output type: " + elem.getAttribute("outputType"), e);
     }
     
-    return new OutputFC(lc, pos, outputType);
+    OutputFC outputFC = new OutputFC(lc, pos, outputType);
+    outputFC.fillInOptionsFromXml(elem);
+    return outputFC;
   }
   
 }

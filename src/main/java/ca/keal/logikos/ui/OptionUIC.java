@@ -34,11 +34,14 @@ public class OptionUIC extends UIComponent {
       
       textField.setOnKeyTyped(e -> {
         // set the option's value and notify the user if it's invalid
-        String text = e.getText();
+        String text = textField.getText();
         boolean valid = option.setValue(text);
         
         if (valid) {
           textField.setStyle("-fx-border-color: transparent");
+          
+          Logikos.getInstance().getField().setModified(true);
+          Logikos.getInstance().getWindowTitleManager().update();
         } else {
           textField.setStyle("-fx-border-color: red");
         }

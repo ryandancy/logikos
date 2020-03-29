@@ -142,6 +142,7 @@ public class InputFC extends LabelledFC {
     
     InputFC inputFC = new InputFC(lc, pos, inputType);
     inputFC.setKeyBinding(keyBinding);
+    inputFC.fillInOptionsFromXml(elem);
     return inputFC;
   }
   

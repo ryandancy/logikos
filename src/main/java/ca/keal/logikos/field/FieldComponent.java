@@ -97,7 +97,7 @@ public class FieldComponent {
     Element logicElem = XmlUtil.getDirectChildByTagName(elem, "logicComponent");
     LogicComponent lc = LogicComponent.fromXml(logicElem);
     
-    // Handle the input/output attributes set by InputFC and OutputFC - this is tight coupling! bad! but whatever
+    // Handle the input/output/options attributes set by Input/Output/OptionFC - this is tight coupling! bad!
     if (elem.hasAttribute("input")) {
       return InputFC.fromXml(elem, pos, (Input) lc);
     } else if (elem.hasAttribute("output")) {

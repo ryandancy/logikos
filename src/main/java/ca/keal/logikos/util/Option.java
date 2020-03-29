@@ -14,7 +14,8 @@ public class Option<T> {
   private T value;
   
   /**
-   * Create a new option. Note that the value of the option is displayed as its representation via {@link #toString}.
+   * Create a new option. Note that the value of the option is displayed as its representation via {@link #toString},
+   * and {@code value.equals(transformer.apply(value.toString()))} must be true.
    * @param text The text displayed beside the option.
    * @param validator A function which returns whether the user's input is valid.
    * @param transformer The function used to transform the user's input into a useful type.
