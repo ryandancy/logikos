@@ -4,6 +4,7 @@ import ca.keal.logikos.field.Field;
 import ca.keal.logikos.field.InputFC;
 import ca.keal.logikos.field.OutputFC;
 import ca.keal.logikos.logic.AndGate;
+import ca.keal.logikos.logic.Clock;
 import ca.keal.logikos.logic.Input;
 import ca.keal.logikos.logic.NandGate;
 import ca.keal.logikos.logic.NotGate;
@@ -49,6 +50,7 @@ public class Logikos extends Application {
           type -> position -> new OutputFC(new Output(), position, type),
           (fc, isGhost) -> new OutputUIC((OutputFC) fc, isGhost),
           OutputFC.Type.LAMP, OutputFC.Type.values()),
+      new PlaceComponentTool("Clock", "Add a clock", Clock::new),
       new PlaceComponentTool("AND", "Add an AND gate", AndGate::new),
       new PlaceComponentTool("OR", "Add an OR gate", OrGate::new),
       new PlaceComponentTool("NOT", "Add a NOT gate", NotGate::new),
