@@ -60,8 +60,8 @@ public class UserGate extends Gate {
       inputFCs.get(i).getLogicComponent().setValue(input[i]);
     }
     
-    // Evaluate
-    return field.evaluate(null);
+    // Tick
+    return field.tick(null);
   }
   
   @Override

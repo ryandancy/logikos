@@ -31,11 +31,10 @@ public class OutputFC extends LabelledFC {
   }
   
   /**
-   * Evaluate the underlying {@link Output} using the given {@link EvaluationListener}. This is package-private as it
-   * should only ever be called by {@link Field}; the UI layer has no need of it.
+   * Get the output value of the field component.
    */
-  boolean evaluate(EvaluationListener listener) {
-    return getLogicComponent().evaluate(listener)[0];
+  boolean getOutput() {
+    return getLogicComponent().getOutputValues()[0];
   }
   
   /**

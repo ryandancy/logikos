@@ -21,6 +21,10 @@ public abstract class LogicComponent {
   private final Port.Input[] inputs;
   private final Port.Output[] outputs;
   
+  private boolean[] inputValues;
+  private boolean[] outputValues;
+  private boolean[] nextOutputValues;
+  
   private UUID id = UUID.randomUUID();
   
   /**
@@ -32,6 +36,8 @@ public abstract class LogicComponent {
   protected LogicComponent(int numInputs, int numOutputs) {
     inputs = getPortArray(numInputs, Port.Input::new, Port.Input[]::new);
     outputs = getPortArray(numOutputs, Port.Output::new, Port.Output[]::new);
+    inputValues = new boolean[numInputs];
+    outputValues = new boolean[numOutputs];
   }
   
   // Helper to fill an array with Ports with port numbers and array indices aligned
@@ -81,21 +87,46 @@ public abstract class LogicComponent {
     // by default, return the index'th letter, unless there's only one of this type, in which case return nothing
     return numPorts == 1 ? "" : String.valueOf((char) (index + 'a'));
   }
+
+  /**
+   * Reset all input and output values to false.
+   */
+  public void reset() {
+    inputValues = new boolean[getNumInputs()];
+    outputValues = new boolean[getNumOutputs()];
+    nextOutputValues = null;
+  }
   
   /**
-   * Find the output values for this LogicComponent.
-   * @param listener An {@link EvaluationListener} to be called on each successful evaluation. This may be {@code null}
-   *  if no listener is desired. Note that the listener will be called from bottom-to-top (from the earliest- to the
-   *  latest-updated component) as that is the order in which evaluations finish.
-   * @return This {@link LogicComponent}'s output values for its current input values.
+   * Fetch the inputs values from this component's inputs and ready for evaluation.
    */
-  public abstract boolean[] evaluate(EvaluationListener listener);
+  public void updateInputs() {
+    inputValues = new boolean[getNumInputs()];
+    for (int i = 0; i < getNumInputs(); i++) {
+      Port.Input input = inputs[i];
+      inputValues[i] = input.getConnection().getValue();
+    }
+  }
+
+  /**
+   * Generate the output values from the queued input values and queue them to be updated to the output values
+   * when {@link #updateOutputs()} is called.
+   */
+  public void tick(EvaluationListener listener) {
+    nextOutputValues = evaluate(listener, inputValues);
+  }
   
   /**
-   * @see #evaluate(EvaluationListener)
+   * Get the output values for the current input values.
    */
-  public boolean[] evaluate() {
-    return evaluate(null);
+  abstract boolean[] evaluate(EvaluationListener listener, boolean[] inputValues);
+  
+  public void updateOutputs() {
+    outputValues = nextOutputValues;
+  }
+  
+  public boolean[] getOutputValues() {
+    return outputValues;
   }
   
   /** @see Gate#markDirty() */

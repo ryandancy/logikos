@@ -7,13 +7,7 @@ package ca.keal.logikos.logic;
  * and not for other types of {@link LogicComponent}.
  */
 public abstract class Gate extends LogicComponent {
-  
-  /**
-   * The cached result from the last time this {@link Gate} was evaluated. {@code null} means the output must be
-   * re-generated.
-   */
-  private boolean[] memoizedOutput = null;
-  
+
   /**
    * Initialize the Gate with {@code numInputs} inputs {@link Port.Input}s and {@code numOutputs} output
    * {@link Port.Output}s.
@@ -25,43 +19,17 @@ public abstract class Gate extends LogicComponent {
   }
   
   /**
-   * Force this {@link Gate} to re-query its inputs and re-evaluate the logical operation. This must be called when
-   * an input has changed and if one wishes the circuit to be re-evaluated.
-   */
-  @Override
-  public void markDirty() {
-    memoizedOutput = null;
-  }
-  
-  /**
-   * @return Whether this {@link Gate} will re-query its inputs upon evaluation.
-   */
-  @Override
-  public boolean isDirty() {
-    return memoizedOutput == null;
-  }
-  
-  /**
    * Find this {@link Gate}'s output values by evaluating all previous {@link LogicComponent}s.
    * @return This {@link Gate}'s output values for its current input values.
    */
   @Override
-  public boolean[] evaluate(EvaluationListener listener) {
-    if (memoizedOutput != null) return memoizedOutput;
-    
-    // Get all the input values
-    Port.Input[] inputs = getInputs();
-    boolean[] inputValues = new boolean[getNumInputs()];
-    for (int i = 0; i < inputValues.length; i++) {
-      inputValues[i] = inputs[i].getInputValue(listener);
-    }
-    
+  public boolean[] evaluate(EvaluationListener listener, boolean[] inputValues) {
     // Evaluate them
-    memoizedOutput = logicalEval(inputValues);
+    boolean[] output = logicalEval(inputValues);
     if (listener != null) {
-      listener.onEvaluation(new EvaluationListener.Event(this, inputValues, memoizedOutput));
+      listener.onEvaluation(new EvaluationListener.Event(this, inputValues, output));
     }
-    return memoizedOutput;
+    return output;
   }
   
   /**

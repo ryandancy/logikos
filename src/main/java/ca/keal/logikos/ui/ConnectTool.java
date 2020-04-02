@@ -56,12 +56,6 @@ public class ConnectTool extends Tool {
         return;
       }
       
-      // Validate the connection
-      if (!isValidConnection(position)) {
-        clearStoredPortData();
-        return;
-      }
-      
       // Connect the components
       if (portOver.isInput()) {
         connect(storedComponent, storedPortNumber, position.getComponent(), portOver.getPortNumber());
@@ -93,33 +87,6 @@ public class ConnectTool extends Tool {
     
     Logikos.getInstance().getField().setModified(true);
     Logikos.getInstance().getWindowTitleManager().update();
-  }
-  
-  private boolean isValidConnection(MousePosition position) {
-    // Check for circular connections: traverse tree from input end and if the output end is reached it's circular
-    UIComponent initial;
-    UIComponent lookingFor;
-    if (position.getPortOver().isInput()) {
-      initial = position.getComponent();
-      lookingFor = storedComponent;
-    } else {
-      initial = storedComponent;
-      lookingFor = position.getComponent();
-    }
-    
-    Queue<UIComponent> toCheck = new ArrayDeque<>();
-    toCheck.add(initial);
-    while (!toCheck.isEmpty()) {
-      UIComponent current = toCheck.remove();
-      if (current == lookingFor) return false; // TODO update some form of status bar
-      for (List<UIConnection> outputConnections : current.getOutputConnectionLists()) {
-        for (UIConnection outputConnection : outputConnections) {
-          toCheck.add(outputConnection.getToComponent());
-        }
-      }
-    }
-    
-    return true;
   }
   
   @Override

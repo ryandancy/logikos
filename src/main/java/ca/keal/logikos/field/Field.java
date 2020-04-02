@@ -102,22 +102,47 @@ public class Field {
   public void setModified(boolean modified) {
     this.modified = modified;
   }
+
+  /**
+   * Reset the evaluation states of the entire field to false.
+   */
+  public void reset() {
+    for (FieldComponent fc : fieldComponents) {
+      fc.getLogicComponent().reset();
+    }
+  }
   
   /**
-   * Evaluate the entire {@link Field} and return the output as an array.
+   * Tick each gate in the {@link Field} and return the {@link OutputFC}s' output as an array.
    * @param listener An {@link EvaluationListener} to listen to each gate's evaluation. May be {@code null}.
    * @return An array containing the output of each {@link OutputFC} in order. To get the {@link OutputFC} associated
    *  with each result, match each element in the returned array with the corresponding element in
    *  {@link #getOutputFCs()}.
    */
-  public boolean[] evaluate(EvaluationListener listener) {
-    boolean[] output = new boolean[outputFCs.size()];
-    for (int i = 0; i < outputFCs.size(); i++) {
-      output[i] = outputFCs.get(i).evaluate(listener);
+  public boolean[] tick(EvaluationListener listener) {
+    // first load all inputs into the components
+    for (FieldComponent fc : fieldComponents) {
+      fc.getLogicComponent().updateInputs();
     }
-    return output;
+    
+    // then tick each of them
+    for (FieldComponent fc : fieldComponents) {
+      fc.getLogicComponent().tick(listener);
+    }
+    
+    // then load all the outputs
+    for (FieldComponent fc : fieldComponents) {
+      fc.getLogicComponent().updateOutputs();
+    }
+    
+    // then assemble the array of output FC return values
+    boolean[] outputs = new boolean[outputFCs.size()];
+    for (int i = 0; i < outputFCs.size(); i++) {
+      outputs[i] = outputFCs.get(i).getOutput();
+    }
+    return outputs;
   }
-
+  
   /**
    * Serialize the entire {@link Field} to an XML element.
    * @return An {@link Element} from which the field can be recovered.

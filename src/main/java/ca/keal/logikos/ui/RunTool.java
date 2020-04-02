@@ -4,7 +4,11 @@ import ca.keal.logikos.field.Field;
 import ca.keal.logikos.field.InputFC;
 import ca.keal.logikos.logic.EvaluationListener;
 import ca.keal.logikos.logic.LogicComponent;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Node;
+import javafx.util.Duration;
 
 /**
  * A tool used to run/evaluate the chip. This tool is placed in the evaluation box. When active, the chip is evaluated
@@ -13,6 +17,10 @@ import javafx.scene.Node;
 // TODO validation of the field before evaluation
 // TODO a better lookup system for LogicComponent -> FieldComponent -> UIComponent
 public class RunTool extends Tool implements EvaluationListener {
+  
+  private static final int TICK_DELAY_MS = 5;
+
+  private Timeline timer = new Timeline(new KeyFrame(Duration.millis(TICK_DELAY_MS), e -> evaluate()));
   
   // for pressing/releasing pressable components
   private InputUIC pressedInputUIC;
@@ -70,7 +78,11 @@ public class RunTool extends Tool implements EvaluationListener {
     PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
     fieldPane.setStyle("-fx-border-color: red; -fx-border-width: 15px");
     
-    evaluate();
+    // Reset everything on the field
+    Logikos.getInstance().getField().reset();
+    
+    timer.setCycleCount(Animation.INDEFINITE);
+    timer.play();
   }
   
   @Override
@@ -78,6 +90,8 @@ public class RunTool extends Tool implements EvaluationListener {
     // Remove the red border on the FieldPane
     PannablePane fieldPane = Logikos.getInstance().getFieldPaneController().getFieldPane();
     fieldPane.setStyle("-fx-border: none");
+    
+    timer.stop();
     
     // Reset all InputUIC/OutputUICs to off, reset all UIConnection colours
     for (Node node : Logikos.getInstance().getFieldPaneController().getFieldPane().getContentChildren()) {
@@ -94,7 +108,7 @@ public class RunTool extends Tool implements EvaluationListener {
   
   private void evaluate() {
     Field field = Logikos.getInstance().getField();
-    boolean[] outputs = field.evaluate(this);
+    boolean[] outputs = field.tick(this);
     
     // Set all OutputUICs' values
     for (Node node : Logikos.getInstance().getFieldPaneController().getFieldPane().getContentChildren()) {
