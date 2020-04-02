@@ -2,11 +2,14 @@ package ca.keal.logikos.logic;
 
 import ca.keal.logikos.field.Field;
 import ca.keal.logikos.field.InputFC;
+import ca.keal.logikos.ui.Logikos;
 import ca.keal.logikos.util.DeserializationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -86,25 +89,32 @@ public class UserGate extends Gate {
   
   @Override
   public Element toXml(Document doc) {
+    Path absPath = Paths.get(field.getFilename()).normalize();
+    Path base = Paths.get(Logikos.getInstance().getField().getFilename()).getParent().normalize();
+    Path relPath = base.relativize(absPath);
+    
     // Overwrite the type and add the filename
     Element elem = super.toXml(doc);
     elem.setAttribute("type", "USER");
-    elem.setAttribute("filename", field.getFilename());
+    elem.setAttribute("filename", relPath.toString());
     return elem;
   }
   
-  public static UserGate fromXml(Element elem) throws DeserializationException {
+  public static UserGate fromXml(Element elem, String filename) throws DeserializationException {
     if (!elem.hasAttribute("filename")) {
       throw new DeserializationException("User gate elements must have the 'filename' attribute.");
     }
     
+    Path gatePath = Paths.get(elem.getAttribute("filename")).normalize();
+    Path base = Paths.get(filename).getParent().normalize();
+    Path absGatePath = base.resolve(gatePath);
+    
     // Attempt to recover the field from the filename
-    String filename = elem.getAttribute("filename");
     Field userField;
     try {
-      userField = Field.fromXml(filename);
+      userField = Field.fromXml(absGatePath.toString());
     } catch (IOException e) {
-      throw new DeserializationException("Error while trying to read file '" + filename + "'", e);
+      throw new DeserializationException("Error while trying to read file '" + absGatePath + "'", e);
     }
     
     return new UserGate(userField);

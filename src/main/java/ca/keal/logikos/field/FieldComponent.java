@@ -81,7 +81,7 @@ public class FieldComponent {
    * {@link #fillInPortsFromXml(Map, Element)} must be called afterwards with a map of all UUIDs to FieldComponents.
    */
   // TODO put tag names into constants and don't use this magic string crap
-  public static FieldComponent instantiateFromXml(Element elem) throws DeserializationException {
+  public static FieldComponent instantiateFromXml(Element elem, String filename) throws DeserializationException {
     if (!elem.getTagName().equals("fieldComponent")) {
       throw new DeserializationException("Field component must have tag <fieldComponent>.");
     }
@@ -89,7 +89,7 @@ public class FieldComponent {
     Element posElem = XmlUtil.getDirectChildByTagName(elem, "position");
     Position pos = Position.fromXml(posElem);
     Element logicElem = XmlUtil.getDirectChildByTagName(elem, "logicComponent");
-    LogicComponent lc = LogicComponent.fromXml(logicElem);
+    LogicComponent lc = LogicComponent.fromXml(logicElem, filename);
     
     // Handle the input/output/options attributes set by Input/Output/OptionFC - this is tight coupling! bad!
     if (elem.hasAttribute("input")) {

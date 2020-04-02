@@ -181,7 +181,7 @@ public abstract class LogicComponent {
    * Deserialize the XML element to a LogicComponent, but do not fill in ports yet. That must be done with a call
    * to {@link #fillInPortsFromXml(Map, Element)} afterwards.
    */
-  public static LogicComponent fromXml(Element elem) throws DeserializationException {
+  public static LogicComponent fromXml(Element elem, String filename) throws DeserializationException {
     if (!elem.getTagName().equals("logicComponent")) {
       throw new DeserializationException("Logic components must have tag <logicComponent>.");
     }
@@ -217,7 +217,7 @@ public abstract class LogicComponent {
         lc = new Clock();
         break;
       case "USER":
-        lc = UserGate.fromXml(elem);
+        lc = UserGate.fromXml(elem, filename);
         break;
       default:
         throw new DeserializationException("Unrecognized logic component type: " + type);
