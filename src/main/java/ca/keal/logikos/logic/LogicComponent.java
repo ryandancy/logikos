@@ -213,6 +213,9 @@ public abstract class LogicComponent {
       case "OUTPUT":
         lc = new Output();
         break;
+      case "CLK":
+        lc = new Clock();
+        break;
       case "USER":
         lc = UserGate.fromXml(elem);
         break;
