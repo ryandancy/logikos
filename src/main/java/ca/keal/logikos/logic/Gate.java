@@ -2,9 +2,7 @@ package ca.keal.logikos.logic;
 
 /**
  * A logic gate; i.e., a {@link LogicComponent} that has input and output {@link Port}s and performs a logical
- * operation. This class exists so that {@link Input} and {@link Output} are not weighed down by redundant memoization,
- * as memoization and the more complex {@link #evaluate(EvaluationListener)} implementation only make sense for gates
- * and not for other types of {@link LogicComponent}.
+ * operation.
  */
 public abstract class Gate extends LogicComponent {
 

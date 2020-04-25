@@ -5,6 +5,7 @@ import ca.keal.logikos.field.InputFC;
 import ca.keal.logikos.field.OutputFC;
 import ca.keal.logikos.logic.AndGate;
 import ca.keal.logikos.logic.Clock;
+import ca.keal.logikos.logic.Constant;
 import ca.keal.logikos.logic.Input;
 import ca.keal.logikos.logic.NandGate;
 import ca.keal.logikos.logic.NotGate;
@@ -55,6 +56,8 @@ public class Logikos extends Application {
       new PlaceComponentTool("OR", "Add an OR gate", OrGate::new),
       new PlaceComponentTool("NOT", "Add a NOT gate", NotGate::new),
       new PlaceComponentTool("NAND", "Add a NAND gate", NandGate::new),
+      new PlaceComponentTool("0", "Add a constant 0", () -> new Constant(false)),
+      new PlaceComponentTool("1", "Add a constant 1", () -> new Constant(true)),
       
       // these go in the evaluation box
       new RunTool()

@@ -219,6 +219,12 @@ public abstract class LogicComponent {
       case "USER":
         lc = UserGate.fromXml(elem, filename);
         break;
+      case "0":
+        lc = new Constant(false);
+        break;
+      case "1":
+        lc = new Constant(true);
+        break;
       default:
         throw new DeserializationException("Unrecognized logic component type: " + type);
     }
